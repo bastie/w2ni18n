@@ -32,7 +32,7 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Internationalization',
-        'Programming Language :: Java :: 11',
-        'Programming Language :: CSharp :: 11',
+        #'Programming Language :: Java :: 11',
+        #'Programming Language :: CSharp :: 5',
     ]
 )

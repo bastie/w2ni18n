@@ -14,7 +14,7 @@
       <PackageIcon></PackageIcon>
             
       <PackageTags>Java;Python;CSharp;API;developer</PackageTags>
-      <PackageReleaseNotes>palceholder</PackageReleaseNotes>
+      <PackageReleaseNotes>Version 1.0</PackageReleaseNotes>
       <IncludeSource>true</IncludeSource>
 
       <RepositoryUrl>https://github.com/bastie/w2ni18n.git</RepositoryUrl>
