@@ -24,3 +24,9 @@ dist/
 /csharp/**/obj/**
 /csharp/**/bin/**
 
+# Vala
+/vala/bin/**
+
+
+
+#EOF

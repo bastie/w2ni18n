@@ -1,0 +1,6 @@
+# Requirements
+
+## Vala compiler
+## Mac: $ brew install vala
+## Meson build system
+## Mac: $ brew install meson
