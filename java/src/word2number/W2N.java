@@ -30,11 +30,27 @@ import java.util.Locale;
  */
 public class W2N {
   
-  private final HashMap<String, Object> filebasedNumberSystem;
+  /**
+   * The localized number system.
+   */
+  private final HashMap<String, Long> numberSystem;
   private final HashMap<String, String> normalizeData;
+  /**
+   * The decimal words are ever the first ten words in config file.
+   */
   private final ArrayList<String> decimalWords;
+  /**
+   * The measure values
+   */
   private final ArrayList<Long> sortedMeasureValues;
+  /**
+   * The localized name of point, for example "komma" in german
+   */
+  private final String localizedPointName;
   
+  /**
+   * The language 
+   */
   private final String lang;
   
   public W2N () {
@@ -51,7 +67,7 @@ public class W2N {
           newLang = "en";  // fallback
       this.lang = newLang.substring(0,2);
   
-      this.filebasedNumberSystem = new HashMap<>();
+      this.numberSystem = new HashMap<>();
       this.decimalWords = new ArrayList<>(10);
       this.normalizeData = new HashMap<>();
       this.sortedMeasureValues = new ArrayList<>();
@@ -59,13 +75,14 @@ public class W2N {
       final BufferedReader numberSystemData = new BufferedReader( new InputStreamReader(new BufferedInputStream(dataFile,40960),"utf-8"));
       String line = null;
       int zeroToNine = 0;
+      String pointName = "";
       while ((line = numberSystemData.readLine()) != null) {
         if (line.startsWith("#")) {
         }
         else {
           String[] keyValue = line.split("=",2);
-          String key = keyValue[0];
-          Object val = keyValue[1];
+          String key = keyValue[0].trim();
+          String val = keyValue[1].trim();
           if (key.startsWith("replace:")) {
             key = key.substring("replace:".length());
             normalizeData.put(key,val.toString().trim());
@@ -73,16 +90,19 @@ public class W2N {
           else if (key.startsWith("measure:")) {
             sortedMeasureValues.add(Long.valueOf(val.toString().trim()));
           }
-          else if (!"point".equals(key)) {
-            val = Long.valueOf(val.toString());
+          else if ("point".equals(key)) {
+            pointName = val;
           }
-          this.filebasedNumberSystem.put(key, val);
+          else {
+            this.numberSystem.put(key, Long.valueOf(val.toString().trim()));
+          }
           if (zeroToNine<10) {
             this.decimalWords.add(key);
             zeroToNine++;
           }
         }
       }
+      this.localizedPointName = pointName;
       Collections.sort(sortedMeasureValues,Collections.reverseOrder());
     }
     catch (Throwable t) {
@@ -99,7 +119,7 @@ public class W2N {
     List<Integer> digitValues = new LinkedList<>();
     // calculate the three digit values (max)
     for (String word : numberWords) {
-        Integer nextNumberCandidat = Integer.valueOf(this.filebasedNumberSystem.get(word).toString());
+        Integer nextNumberCandidat = Integer.valueOf(this.numberSystem.get(word).toString());
         digitValues.add(nextNumberCandidat);
     }
     
@@ -137,7 +157,7 @@ public class W2N {
       if(!decimalWords.contains(decWord))
         return "0";
       else
-        decimalNumberStr += filebasedNumberSystem.get(decWord);
+        decimalNumberStr += numberSystem.get(decWord);
     }
     final String finalDecimalString = decimalNumberStr; // TODO remove line
     return finalDecimalString;
@@ -195,14 +215,13 @@ public class W2N {
     final boolean isDigit = result != null; // maybe to optimize by compiler but to similar code to python 
     if (!isDigit) {
       String [] splitWords = numberSentence.split("[\\s,]+"); // strip extra spaces and comma and than split sentence into words
-      String localizedPointName = this.filebasedNumberSystem.get("point").toString();
       
       // removing and, & etc.
       for (String word : splitWords) {
-        if (this.filebasedNumberSystem.containsKey(word)) {
+        if (this.numberSystem.containsKey(word)) {
           cleanNumbers.add(word);
         }
-        else if (word.equals(localizedPointName)){
+        else if (word.equals(this.localizedPointName)){
           cleanNumbers.add(word);
         }
       }
@@ -211,15 +230,15 @@ public class W2N {
       if (cleanNumbers.size()== 0) 
           throw new NumberFormatException("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
 
-      final boolean toMuchPoints = cleanNumbers.indexOf(localizedPointName) != cleanNumbers.lastIndexOf(localizedPointName);
+      final boolean toMuchPoints = cleanNumbers.indexOf(this.localizedPointName) != cleanNumbers.lastIndexOf(localizedPointName);
       if (toMuchPoints)
         throw new NumberFormatException(String.format("Redundant point word %s! Please enter a valid number word (eg. two million twenty three thousand and forty nine)",localizedPointName));
   
       // separate decimal part of number (if exists)
-      boolean pointCount = cleanNumbers.indexOf(localizedPointName)>-1;
+      boolean pointCount = cleanNumbers.indexOf(this.localizedPointName)>-1;
       if (pointCount) {
-        cleanDecimalNumbers = new LinkedList<>(cleanNumbers.subList(cleanNumbers.indexOf(localizedPointName)+1, cleanNumbers.size()));
-        cleanNumbers = new LinkedList<>(cleanNumbers.subList(0,cleanNumbers.indexOf(localizedPointName)));
+        cleanDecimalNumbers = new LinkedList<>(cleanNumbers.subList(cleanNumbers.indexOf(this.localizedPointName)+1, cleanNumbers.size()));
+        cleanNumbers = new LinkedList<>(cleanNumbers.subList(0,cleanNumbers.indexOf(this.localizedPointName)));
       }
       // special case "point" without pre or post number   
       if (cleanDecimalNumbers.size() == 0 && cleanNumbers.size() == 0) return Integer.valueOf(0);
@@ -368,8 +387,8 @@ public class W2N {
    * @return name from language configuration or <code>null</code> if not found 
    */
   protected String getNameByNumberValue (Long newNumber) {
-    for (String key : this.filebasedNumberSystem.keySet()) {
-      if (newNumber.equals(this.filebasedNumberSystem.get(key))) {
+    for (String key : this.numberSystem.keySet()) {
+      if (newNumber.equals(this.numberSystem.get(key))) {
         return key;
       }
     }

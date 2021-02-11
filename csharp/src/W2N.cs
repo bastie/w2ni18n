@@ -22,10 +22,12 @@ namespace word2number
     /// <br/>Author: Sͬeͥbͭaͭsͤtͬian
     /// </summary>
     public class W2N {
-        private readonly Dictionary<String, Object> numberSystem;
+        private readonly Dictionary<String, long> numberSystem;
         private readonly Dictionary<String, String> normalizeData;
         private readonly List<String> decimalWords;
         private readonly List<long> sortedMeasureValues;
+
+        private readonly String localizedPointName;
   
   private readonly String lang;
   
@@ -42,7 +44,7 @@ namespace word2number
         newLang = "en";  // fallback
     this.lang = newLang.Substring(0,2);
 
-    this.numberSystem = new Dictionary<string, object>();
+    this.numberSystem = new Dictionary<string, long>();
     this.decimalWords = new List<String>(10);
     this.normalizeData = new Dictionary<string, string>();
     this.sortedMeasureValues = new List<long>();
@@ -57,22 +59,22 @@ namespace word2number
         }
         else {
             String[] keyValue = line.Split("=",2);
-            String key = keyValue[0];
-            Object val = keyValue[1];
+            String key = keyValue[0].Trim();
+            String val = keyValue[1].Trim();
             if (key.StartsWith("replace:")) {
               key = key.Substring("replace:".Length);
-              normalizeData.Add(key,val.ToString().Trim());
+              normalizeData.Add(key,val);
             }
             else if (key.StartsWith("measure:")) {
-              long.TryParse(val.ToString().Trim(), out long value);
+              long.TryParse(val, out long value);
               sortedMeasureValues.Add(value);
             }
-            else if (!"point".Equals(key)) {
-              long.TryParse(val.ToString().Trim(), out long value);
-              val = value;
+            else if ("point".Equals(key)) {
+              this.localizedPointName = val;
             }
-            if (!key.StartsWith("replace:") && !key.StartsWith("measure:")) {
-              this.numberSystem.Add(key, val);
+            else {
+              long.TryParse(val, out long value);
+              this.numberSystem.Add(key, value);
             }
             if (zeroToNine<10) {
               this.decimalWords.Add(key);
@@ -96,9 +98,7 @@ namespace word2number
     List<int> digitValues = new List<int>();
     // calculate the three digit values (max)
     foreach (String word in numberWords) {
-        int nextNumberCandidat = 0;
-        int.TryParse(this.numberSystem[word].ToString(), out nextNumberCandidat);
-        digitValues.Add(nextNumberCandidat);
+        digitValues.Add((int)this.numberSystem[word]);
     }
     int hundredIndex = digitValues.Contains(100) ? digitValues.IndexOf(100) : -1;
     if (hundredIndex == 1){
@@ -191,14 +191,13 @@ namespace word2number
     bool isDigit = result != null; // maybe to optimize by compiler but to similar code to python 
     if (!isDigit) {
       String [] splitWords = Regex.Split(numberSentence,"[\\s,]+"); // strip extra spaces and comma and than split sentence into words
-      String localizedPointName = this.numberSystem["point"].ToString();
       
       // removing and, & etc.
       foreach (String word in splitWords) {
         if (this.numberSystem.ContainsKey(word)) {
           cleanNumbers.Add(word);
         }
-        else if (word.Equals(localizedPointName)){
+        else if (word.Equals(this.localizedPointName)){
           cleanNumbers.Add(word);
         }
       }
@@ -208,15 +207,15 @@ namespace word2number
       if (cleanNumbers.Count== 0) 
           throw new FormatException("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
 
-      bool toMuchPoints = cleanNumbers.IndexOf(localizedPointName) != cleanNumbers.LastIndexOf(localizedPointName);
+      bool toMuchPoints = cleanNumbers.IndexOf(this.localizedPointName) != cleanNumbers.LastIndexOf(this.localizedPointName);
       if (toMuchPoints)
-        throw new FormatException(String.Format("Redundant point word {0}! Please enter a valid number word (eg. two million twenty three thousand and forty nine)",localizedPointName));
+        throw new FormatException(String.Format("Redundant point word {0}! Please enter a valid number word (eg. two million twenty three thousand and forty nine)",this.localizedPointName));
   
       // separate decimal part of number (if exists)
-      bool pointCount = cleanNumbers.IndexOf(localizedPointName)>-1;
+      bool pointCount = cleanNumbers.IndexOf(this.localizedPointName)>-1;
       if (pointCount) {
-        cleanDecimalNumbers = new List<String>(cleanNumbers.GetRange(cleanNumbers.IndexOf(localizedPointName)+1, cleanNumbers.Count-(cleanNumbers.IndexOf(localizedPointName)+1))); //#1
-        cleanNumbers = new List<String>(cleanNumbers.GetRange(0,cleanNumbers.IndexOf(localizedPointName)));
+        cleanDecimalNumbers = new List<String>(cleanNumbers.GetRange(cleanNumbers.IndexOf(this.localizedPointName)+1, cleanNumbers.Count-(cleanNumbers.IndexOf(this.localizedPointName)+1))); //#1
+        cleanNumbers = new List<String>(cleanNumbers.GetRange(0,cleanNumbers.IndexOf(this.localizedPointName)));
       }
 
       // special case "point" without pre or post number   
@@ -368,9 +367,8 @@ namespace word2number
    * @return name from language configuration or <code>null</code> if not found 
    */
   protected String getNameByNumberValue (long newNumber) {
-    foreach (KeyValuePair<string, object> pair in this.numberSystem) {
-      String numberString = ""+newNumber;
-      if (numberString.Equals(pair.Value.ToString())) {
+    foreach (KeyValuePair<string, long> pair in this.numberSystem) {
+      if (newNumber == pair.Value) {
         return pair.Key;
       }
     }

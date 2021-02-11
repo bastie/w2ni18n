@@ -13,6 +13,7 @@ import re
 number_system = {}
 normalize_data = {}
 sorted_measure_values = []# = [1_000_000_000_000,1_000_000_000,1_000_000,1_000,100]
+localizedPointName = ""
 
 lang = "en"
 
@@ -46,9 +47,9 @@ with codecs.open(data_file, "rU", encoding="utf-8") as number_system_data:
             else:
                 if "point" != key:
                     val = int(val)
+                    number_system[key] = val
                 else:
-                    val = val.strip()
-                number_system[key] = val
+                    localizedPointName = val.strip()
 
 sorted_measure_values = sorted(sorted_measure_values,reverse=True)
 decimal_words = list(number_system.keys())[:10]
@@ -267,7 +268,6 @@ def word_to_num(number_sentence):
     else:
         split_words = re.findall(r'\w+', number_sentence)  # strip extra spaces and comma and than split sentence into words
     
-        localizedPointName = number_system['point']
         # removing unknown words form text
         for word in split_words:
             word = normalize_data.get(word,word) # replacing words and lemma text
