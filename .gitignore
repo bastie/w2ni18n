@@ -27,6 +27,7 @@ dist/
 # Vala
 /vala/bin/**
 
-
+# COBOL
+/cobol/bin/**
 
 #EOF
