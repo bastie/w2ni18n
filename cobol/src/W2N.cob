@@ -31,40 +31,9 @@
        WORKING-STORAGE SECTION.
       * Like PASCAL, unlike Java or C does COBOL declare variables and
       * memories before programm definition.
-      
-      *-----
 
-      *> 100%-pure COBOL text utilities Linkage
-      *> Select the text util function over 88
-      *> 
-       01 text-util.
-         05 text-util-function             pic 9(2).
-           88 text-util-func-none            value zero.
-           88 text-util-func-trim            value 10.
-           88 text-util-func-indexof         value 20.
-           88 text-util-func-startswith      value 25.
-         05 filler.
-           10 text-util-input-output-byte  pic x(199998).
-           10 text-util-input-output       
-              redefines text-util-input-output-byte pic n(99999).    
-           10 text-util-input-xdata        pic n(99999).
-           10 text-util-input-looking-for  
-              redefines text-util-input-xdata pic n(99999). *> using for indexof
-           10 text-util-input-starts-with  
-              redefines text-util-input-xdata pic n(99999). *> using for indexof
-         05 text-util-result.
-           10 text-util-rc                 pic 9(2).
-             88 text-util-rc-ok              value zero thru 89.
-             88 text-util-rc-true            value 01.
-             88 text-util-rc-false           value 02.
-             88 text-util-rc-nothing-todo    value 80.
-             88 text-util-rc-unknown-error   value 90.
-             88 text-util-rc-not-impl        value 99.
-           10 text-util-result-index       pic 9(5).
-           10 text-util-result-trim-end    pic 9(5).
-       
-       01 text-util-work-counter           pic 99999.
-      *-----
+       copy "TxtUtils.cpy".      
+
        77 CONFIG-KEY-VALUE-DELIMITER  PIC X(1) VALUE "=".
        77 CONFIG-PART-DELIMITER       PIC X(1) VALUE ":".
 
@@ -161,110 +130,18 @@
 
 
        end-perform
-              
-              move "   Zwölf   " to text-util-input-output
-              display ">>>" text-util-input-output-byte(1:40) "<<<"
-              display ">>>" text-util-input-output (1:40) "<<<"
-              set text-util-func-trim to true
-              perform text-util-main
-              display "Text-util-rc: " text-util-rc
-              display ">>>" text-util-input-output-byte(1:40) "<<<"
-              display ">>>" text-util-input-output (1:40) "<<<"
-              display 
-                  ">>>" 
-                  text-util-input-output (1:text-util-result-trim-end) 
-                  "<<<"
-              display 
-                  ">L>" 
-                  text-util-input-output
-                  "<<<"
-
        close config-file.
-       exit section.
-      * exit program. W2N.
-
-
-      *> TODO export
-      *
-       text-util-main section.
-
-       evaluate true
-         when text-util-func-trim          perform text-util-func-10
-         when text-util-func-indexof       perform text-util-func-20
-         when text-util-func-startswith    perform text-util-func-25
-         when text-util-func-none      
-           set text-util-rc-ok to true
-         when other
-           set text-util-rc-not-impl to true
-       end-evaluate
-
-       exit section.
-
-      * Function:  trim
-      * Input:     text-util-input-output
-      * Output:    text-util-input-output, text-util-result-trim-end
-      * Example:       
-      *    IN:  SET text-util-func-trim TO TRUE
-      *         MOVE " Hello text-utils! " TO text-util-input-output
-      *    OUT: text-util-input-output [1:text-util-result-trim-end] EQUAL "Hello text-utils!"
-       text-util-func-10 section. 
-         if not text-util-input-output equal all spaces
-
-           move zero to text-util-work-counter
-           INSPECT text-util-input-output-byte
-               TALLYING text-util-work-counter FOR LEADING SPACE 
-           add 1 to text-util-work-counter                              *> because cobol count beginning is one      
-           move text-util-input-output-byte (text-util-work-counter:)
-             to text-util-input-output-byte
-
-           move zero to text-util-work-counter
-           INSPECT FUNCTION REVERSE (text-util-input-output-byte)
-               TALLYING text-util-work-counter FOR LEADING SPACE
-           move length of text-util-input-output-byte
-             to text-util-result-trim-end
-           subtract text-util-work-counter 
-               from text-util-result-trim-end
-           add 1 to text-util-result-trim-end                           *> because cobol count beginning is one      
-           
-      *> C Feature for example for gnu-cobol
-      *> In result of C terminates Strings with x"00" aka low-value
-      *> we set all spaces after our text to low-value
-      *> and so we can use DISPLAY text-util-input-output
-      *> instead of        DISPLAY text-util-input-output (1:text-util-result-trim-end)
-           move text-util-result-trim-end to text-util-work-counter
-           move low-values 
-             to text-util-input-output-byte(text-util-result-trim-end:)
-
-         else 
-           set text-util-rc-nothing-todo to true
-           move 1 to text-util-result-trim-end
-         end-if
-           
-       exit section.
-
-      * Function:  indexof
-      * Input:     text-util-input-output, text-util-input-looking-for
-      * Output:    text-util-result-index
-      * Example:       
-      *    IN:  SET text-util-func-indexof TO TRUE
-      *         MOVE " Hello text-utils! " TO text-util-input-output
-      *         MOVE "l" TO text-util-input-looking-for
-      *    OUT: text-util-result-index = 4
-       text-util-func-20 section.
-       exit section.
-
-      * Function:  startswith
-      * Input:     text-util-input-output, text-util-input-starts-with
-      * Output:    text-util-rc-true or text-util-rc-false
-      * Example:       
-      *    IN:  SET text-util-func-trim TO TRUE
-      *         MOVE " Hello text-utils! " TO text-util-input-output
-      *         PERFORM/CALL text-util-main/text-util
-      *         SET text-util-func-startswith TO TRUE
-      *         MOVE " Hello text-utils! " TO text-util-input-output
-      *         MOVE "Hello text" TO text-util-input-looking-startswith
-      *    OUT: text-util-rc-true
-       text-util-func-25 section.
+              
+              initialize txt-util-parameter
+              move "   Zwölf   " to txt-util-input-output
+              display ">>>" txt-util-input-output-byte(1:40) "<<<"
+              display ">>>" txt-util-input-output (1:40) "<<<"
+              set txt-util-func-trim to true
+              call "TxtUtils" using by reference txt-util-parameter
+                on exception 
+                  display "MODUL TxtUtils not calling"
+                  call "TxtUtils" using by reference txt-util-parameter
+              end-call
        exit section.
 
        exit program.

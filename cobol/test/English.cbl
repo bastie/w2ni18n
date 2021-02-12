@@ -110,8 +110,8 @@
              display w2n-result-value
            else 
              display "Unexpected result for >>>" w2n-number-sentences  
-      -      "expected=" expected-value "<=>"
-      -      "actually=" w2n-result-value    
+               "expected=" expected-value "<=>"
+               "actually=" w2n-result-value    
              exit program
            end-if
          when other

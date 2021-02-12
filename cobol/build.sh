@@ -23,8 +23,9 @@ rm -Rf ./bin && mkdir ./bin
 #${COBC} -x ${LOCATION_TEST}/English.cbl ${LOCATION_SOURCE}/W2N.cob  -o ${LOCATION_TARGET}/test_en.exe
 
 cd bin
-${COBC} -std=COBOL85 -v -m ../${LOCATION_SOURCE}/W2N.cob
-${COBC} -std=${COBOL_STANDARD} ../${LOCATION_SOURCE}/W2N.cob
+${COBC} -V
+${COBC} -std=COBOL85 -b ../${LOCATION_SOURCE}/W2N.cob ../${LOCATION_SOURCE}/TxtUtils.cbl
+${COBC} -std=${COBOL_STANDARD} -b ../${LOCATION_SOURCE}/W2N.cob ../${LOCATION_SOURCE}/TxtUtils.cbl
 cd ..
 ${COBC} -x ${LOCATION_TEST}/English.cbl -o ${LOCATION_TARGET}/test_en.exe
 
