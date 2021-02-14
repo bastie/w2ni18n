@@ -23,8 +23,20 @@
          05 config-content   pic n(80).
          05 filler redefines config-content.
            10 filler           pic n.
-               88 config-comment-descriptor     value x"0023". *> UTF-16BE value of #
+               88 config-comment-descriptor     value "#", x"0023".     *> UTF-16BE value of #
            10 config-comment-value     pic n(79).
+         05 filler redefines config-content.
+           10 filler           pic n(8).
+               88 config-replace-descriptor     values "replace:",
+                    x"007200650070006c006100630065003a".
+               88 config-measure-descriptor     value "measure:",
+                   x"006d006500610073007500720065003a".
+           10 config-replace-measure-value  pic n(72).
+         05 filler redefines config-content.
+           10 filler           pic n(6).
+               88 config-point-descriptor       value "point=",
+               x"0070006f0069006e0074003d".
+           10 config-point-value  pic n(74).
        
        
       *-----------------------------------------------------------------
@@ -85,8 +97,10 @@
                           *>returning w2n-returning.                    *> gnu-cobol 3.1.2.0 warning not implemented
                                 by reference w2n-returning.
        main section.
+       display "HELLO!"
          perform init
-
+       
+       exit program.
        exit section.
 
       *-----------------------------------------------------------------
@@ -124,24 +138,35 @@
        perform with test before until not CONFIG-SUCCESS
            
               read config-file
-              if not config-comment-descriptor 
-                   display config-line 
-              end-if
-
-
-       end-perform
-       close config-file.
-              
               initialize txt-util-parameter
-              move "   Zwölf   " to txt-util-input-output
-              display ">>>" txt-util-input-output-byte(1:40) "<<<"
-              display ">>>" txt-util-input-output (1:40) "<<<"
+              move config-line to txt-util-input-output
               set txt-util-func-trim to true
               call "TxtUtils" using by reference txt-util-parameter
                 on exception 
                   display "MODUL TxtUtils not calling"
-                  call "TxtUtils" using by reference txt-util-parameter
               end-call
+
+              evaluate true 
+               when config-comment-descriptor 
+                   display "COMMENT:" config-comment-value
+                   continue
+               when config-replace-descriptor
+                   display "S&R:"     config-replace-measure-value
+                   continue
+               when config-measure-descriptor 
+                   display "Measure:" config-replace-measure-value
+                   continue
+               when other
+      *             display "CONFIG: " config-line
+                   continue
+              end-evaluate
+
+
+       end-perform.
+
+       close config-file.
+              
+       goback.
        exit section.
 
        exit program.

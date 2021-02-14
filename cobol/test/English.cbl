@@ -53,26 +53,34 @@
        PROCEDURE DIVISION.
       * Like XUnit tests setup, test, tear-down
        main section.
+       display "enter English.main"
          perform setup
          perform test-positives
          perform test-negatives
          perform tear-down
-         goback.
+       display "exit English.main"
+       
+       move zero to return-code
+       stop run.
        exit section.
+
+
       *----------------------------------------------------------------- 
       * setup 
       * initialize the linkage with our default values
       *-----------------------------------------------------------------
        setup section.
+       DISPLAY "enter English.setup"
            set w2n-returning-ok to true
            initialize w2n-parameter
+       .
        exit section.
       *-----------------------------------------------------------------
       * test-positives
       * test cases for positive text values
       *----------------------------------------------------------------- 
        test-positives section.
-       
+       display "enter Engish.test-positives"       
            initialize expected-value
        move "two million three thousand nine hundred and eighty four"
          to  w2n-number-sentences
@@ -80,23 +88,31 @@
            set expected-is-integer to true
            perform assert-true
 
+       .
        exit section.
       *-----------------------------------------------------------------
       * test-negatives
       * test cases for negative text values
       *----------------------------------------------------------------- 
        test-negatives section.
+       display "enter Engish.test-negatives"       
+           continue
+       .
        exit section.
       *-----------------------------------------------------------------
       * tear down
       *-----------------------------------------------------------------
        tear-down section.
+       display "enter Engish.tear-down"       
+           continue
+       .
        exit section.
 
       *-----------------------------------------------------------------
       * inline helper 
       *-----------------------------------------------------------------
        assert-true section.
+       display "enter Engish.assert-true"       
        call "W2N" using by reference w2n-parameter 
                         by reference w2n-returning
                      on exception display "99 bugs in a bottle..."
@@ -119,8 +135,7 @@
                exit program
        end-evaluate
 
-       display "OK: " w2n-result-value 
-       
+       .
        exit section.       
        
 

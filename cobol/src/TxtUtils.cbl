@@ -30,22 +30,22 @@
        init section.
 
               
-              move "   Zwölf   " to txt-util-input-output
-              display ">>>" txt-util-input-output-byte(1:40) "<<<"
-              display ">>>" txt-util-input-output (1:40) "<<<"
-              set txt-util-func-trim to true
+      *        move "   Zwölf   " to txt-util-input-output
+      *       display ">>>" txt-util-input-output-byte(1:40) "<<<"
+      *       display ">>>" txt-util-input-output (1:40) "<<<"
+      *       set txt-util-func-trim to true
               perform txt-util-main
-              display "Text-util-rc: " txt-util-rc
-              display ">>>" txt-util-input-output-byte(1:40) "<<<"
-              display ">>>" txt-util-input-output (1:40) "<<<"
-              display 
-                  ">>>" 
-                  txt-util-input-output (1:txt-util-result-trim-end) 
-                  "<<<"
-              display 
-                  ">L>" 
-                  txt-util-input-output
-                  "<<<"
+      *       display "Text-util-rc: " txt-util-rc
+      *       display ">>>" txt-util-input-output-byte(1:40) "<<<"
+      *       display ">>>" txt-util-input-output (1:40) "<<<"
+      *       display 
+      *           ">>>" 
+      *           txt-util-input-output (1:txt-util-result-trim-end) 
+      *           "<<<"
+      *       display 
+      *           ">L>" 
+      *           txt-util-input-output
+      *           "<<<"
 
        exit section.
       * exit program. W2N.
@@ -139,3 +139,15 @@
 
        END PROGRAM TxtUtils.
       * EOF
+
+
+      *       initialize txt-util-parameter
+      *        move "   Zwölf   " to txt-util-input-output
+      *        display ">>>" txt-util-input-output-byte(1:40) "<<<"
+      *        display ">>>" txt-util-input-output (1:40) "<<<"
+      *        set txt-util-func-trim to true
+      *        call "TxtUtils" using by reference txt-util-parameter
+      *          on exception 
+      *            display "MODUL TxtUtils not calling"
+      *            call "TxtUtils" using by reference txt-util-parameter
+      *        end-call
