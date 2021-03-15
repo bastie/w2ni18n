@@ -22,19 +22,19 @@ class W2N:
     
     lang = "en"
     
-    def __init__ (self):
+    def __init__ (self, lang_param):
         # first get programming language specific local spoken language
         lang = locale.getlocale()[0]
         if "w2n.lang" in os.environ:
             lang = os.environ["w2n.lang"]
+        if lang is None:
+            lang = lang_param  # fallback
         if lang is None:
             lang = locale.getdefaultlocale()[0]
         if lang is None or lang[0] is None:
             lang = None
             if "LANGUAGE" in os.environ:
                 lang = os.environ["LANGUAGE"]
-        if lang is None:
-            lang = "en"  # fallback
         lang = lang[:2]
         
         # Now analyse the configuration file for the local spoken language
@@ -240,7 +240,7 @@ class W2N:
         return multiplier
     
     
-    def word_to_num(self, number_sentence):
+    def word_to_num(self, number_sentence, lang_param):
         """ public function to return integer for an input `number_sentence` string
         This function return as result
         - the same float if float is input
@@ -326,9 +326,10 @@ class W2N:
     
         return result
 
-def word_to_num(number_sentence):
-    instance = W2N()
-    return instance.word_to_num(number_sentence)
+def word_to_num(number_sentence, lang_param):
+    instance = W2N(lang_param)
+    return instance.word_to_num(number_sentence, lang_param)
 
-#EOF
+print(word_to_num("one", "en"))
+
 
