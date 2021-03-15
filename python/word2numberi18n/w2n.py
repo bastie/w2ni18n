@@ -25,10 +25,10 @@ class W2N:
     def __init__ (self, lang_param):
         # first get programming language specific local spoken language
         lang = locale.getlocale()[0]
-        if "w2n.lang" in os.environ:
-            lang = os.environ["w2n.lang"]
         if lang is None:
             lang = lang_param  # fallback
+        if "w2n.lang" in os.environ:
+            lang = os.environ["w2n.lang"]
         if lang is None:
             lang = locale.getdefaultlocale()[0]
         if lang is None or lang[0] is None:
