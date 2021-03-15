@@ -27,7 +27,7 @@ class W2N:
         lang = locale.getlocale()[0]
         if lang is None:
             lang = lang_param  # fallback
-        if "w2n.lang" in os.environ:
+        if lang is None:
             lang = os.environ["w2n.lang"]
         if lang is None:
             lang = locale.getdefaultlocale()[0]
