@@ -40,6 +40,7 @@ First you have to import the module using the below code.
 
     from word2numberi18n import w2n
 
+
 Then you can use the **word_to_num** method to convert a number-word to numeric digits, as shown below.
 
 ```
@@ -78,10 +79,25 @@ None
 
 word2number looking for your specific language with
 
-    1. defined environment variable w2n.lang with ISO lang code like en, hi, de and if not found
-    2. over locale.getdefaultlocale() and if not found
-    3. over environment variable "LANGUAGE" and if not found
-    4. fallback to english 
+    1. given parameter for language and if not found
+    2. defined environment variable w2n.lang with ISO lang code like en, hi, de and if not found
+    3. over locale.getdefaultlocale() and if not found
+    4. over environment variable "LANGUAGE" and if not found
+    5. fallback to english 
+    
+In result use it classic Python like (example unit_testing_ru.py):
+
+    os.environ['w2n.lang'] = 'ru'
+    w2n.word_to_num('две целых три десятых')
+
+Also work with object oriented Python like (example unit_testing_fr.py):
+
+    instance = w2n.W2N(lang_param="fr")
+    instance.word_to_num('trente-et-un')
+    
+
+
+
     
 Place in the data directory your language specific dictionary file with ISO lang code in the name.
    

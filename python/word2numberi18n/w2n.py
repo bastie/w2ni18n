@@ -328,8 +328,8 @@ class W2N:
     
         return result
 
-def word_to_num(number_sentence):
-    instance = W2N(lang_param=None)
+def word_to_num(number_sentence, lang_param=None):
+    instance = W2N(lang_param)
     return instance.word_to_num(number_sentence)
 
 #EOF
