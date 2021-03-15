@@ -22,9 +22,11 @@ class W2N:
     
     lang = "en"
     
-    def __init__ (self):
+    def __init__ (self, lang_param):
         # first get programming language specific local spoken language
-        lang = locale.getlocale()[0]
+        lang = lang_param
+        if lang is None:
+            lang = locale.getlocale()[0]
         if "w2n.lang" in os.environ:
             lang = os.environ["w2n.lang"]
         if lang is None:
@@ -326,8 +328,8 @@ class W2N:
     
         return result
 
-def word_to_num(number_sentence):
-    instance = W2N()
+def word_to_num(number_sentence, lang_param=None):
+    instance = W2N(lang_param)
     return instance.word_to_num(number_sentence)
 
 #EOF
