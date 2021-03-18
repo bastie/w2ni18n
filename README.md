@@ -175,8 +175,6 @@ Also work with object oriented Python like (example unit_testing_fr.py):
 
     instance = w2n.W2N(lang_param="fr")
     instance.word_to_num('trente-et-un')
-    
-
 
 
     
@@ -220,10 +218,11 @@ On macOS
 
 word2number looking for your specific language with
 
-    1. defined environment variable (not property) w2n.lang with ISO lang code like en, hi, de and if not found
-    2. over java.util.Locale.getDefault() and if null
-    3. over environment variable "LANGUAGE" and if not found
-    4. fallback to english
+    1. construct your object instance with ISO lang code as parameter like fr, de and if not
+    2. defined environment variable (not property) w2n.lang with ISO lang code like en, hi, de and if not found
+    3. over java.util.Locale.getDefault() and if null
+    4. over environment variable "LANGUAGE" and if not found
+    5. fallback to english
     
 Place in the data directory your language specific dictionary file with ISO lang code in the name.
    
@@ -287,10 +286,11 @@ On macOS
 
 word2number looking for your specific language with
 
-    1. defined environment variable (not property) w2n.lang with ISO lang code like en, hi, de and if not found
-    2. over java.util.Locale.getDefault() and if null
-    3. over environment variable "LANGUAGE" and if not found
-    4. fallback to english
+    1. Construct your W2N instance with ISO lang code parameter like es, fr, pt and if not
+    2. defined environment variable (not property) w2n.lang with ISO lang code like en, hi, de and if not found
+    3. over java.util.Locale.getDefault() and if null
+    4. over environment variable "LANGUAGE" and if not found
+    5. fallback to english
     
 Place in the data directory your language specific dictionary file with ISO lang code in the name.
    
