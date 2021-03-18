@@ -3,105 +3,23 @@
 Convert number words from different languages with Python, CSharp or Java API eg. three hundred and forty two to numbers (342) or vingt-et-un (21) or две целых три десятых (2.3).Word2Number-i18n convert number words (eg. twenty one) to numeric digits (21).
 Below is the installation, usage and other details of this module.
 
-## Python
 
-Please note that these Python implementation is similar to Java and CSharp.
+## Fun with numbers
 
-### Installation
+* French: We can calculate! So 4*20+10 are 90 and this is normal (quatre-vingt-dix).
+* German: We have our own rules. All under million is one word (but often false written) and also we say for 21 onetwenty (einunzwanzig) not twenty one.
+* Spanish: Less is more, we need no word for 1.000.000.000 as word an says mil millón (for example tres mil millones).
 
-Please ensure that you have **updated pip** to the latest version before installing word2number-i18n.
+## Supported natural languages
 
-You can install the module using Python Package Index using the below command.
-
-```
-    pip3 install word2number-i18n 
-```
-
-### Installation from source
-
-On macOS
-
-```
-    # git clone https://github.com/bastie/w2ni18n.git w2n
-    # python3 setup.py install
-```
-
-Make sure you install all requirements given in requirements.txt
-
-```
-    pip3 install -r requirements.txt
-```
+* English
+* French
+* Portugues
+* Russian
+* Spanish
 
 
-### Usage
-
-Add the word2number-i18n to requirements.txt in your project.
-First you have to import the module using the below code.
-
-    from word2numberi18n import w2n
-
-
-Then you can use the **word_to_num** method to convert a number-word to numeric digits, as shown below.
-
-```
-print(w2n.word_to_num("two million three thousand nine hundred and eighty four"))
-2003984
-```
-```
-print(w2n.word_to_num('two point three')) 
-2.3
-```
-```
-print(w2n.word_to_num('112')) 
-112
-```
-```
-print(w2n.word_to_num('point one')) 
-0.1
-```
-```
-print(w2n.word_to_num('one hundred thirty-five')) 
-135
-```
-```
-print(w2n.word_to_num('million million'))
-Error: Redundant number! Please enter a valid number word (eg. two million twenty three thousand and forty nine)
-None
-```
-```
-print(w2n.word_to_num('blah'))
-Error: No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)
-None
-```
-
-
-### i18n
-
-word2number looking for your specific language with
-
-    1. given parameter for language and if not found
-    2. defined environment variable w2n.lang with ISO lang code like en, hi, de and if not found
-    3. over locale.getdefaultlocale() and if not found
-    4. over environment variable "LANGUAGE" and if not found
-    5. fallback to english 
-    
-In result use it classic Python like (example unit_testing_ru.py):
-
-    os.environ['w2n.lang'] = 'ru'
-    w2n.word_to_num('две целых три десятых')
-
-Also work with object oriented Python like (example unit_testing_fr.py):
-
-    instance = w2n.W2N(lang_param="fr")
-    instance.word_to_num('trente-et-un')
-    
-
-
-
-    
-Place in the data directory your language specific dictionary file with ISO lang code in the name.
-   
-#### Request new language
+### Request new language
 
 Do follow steps
 
@@ -109,7 +27,7 @@ Do follow steps
     2. if not found check ISO-639-3 code
     3. if not found create new file with new ISO-639-1/3 code
 
-##### Example
+#### Example
 You want to tranfer NLP CARD to numeric value for Lower Sorbian. German (de) isn't it. 
 You do not found an ISO-639-1 code, you do not found an ISO-639-1 file for ```dsb``` extension.
 You create a new file ```number_system_dsb.txt``` with utf-8 encoding
@@ -136,7 +54,7 @@ additional replacement words and measure words in the **same** configuration fil
 Its different to value names where the key is localized now the key is internal used and
 parts or full predefined. Feel free to copy a existing language config.
 
-*Examples:*
+**Example:**
 
 ```
 # 0-9
@@ -170,7 +88,101 @@ So giving ``twenty nice gran`` do the follow:
 Internal much more especially checks inside working.
 
 
-### Develop package
+
+## Supported programming languages
+
+### Python
+
+Please note that these Python implementation is similar to Java and CSharp.
+
+#### Installation
+
+Please ensure that you have **updated pip** to the latest version before installing word2number-i18n.
+
+You can install the module using Python Package Index using the below command.
+
+```
+    pip3 install word2number-i18n 
+```
+
+#### Installation from source
+
+On macOS
+
+```
+    # git clone https://github.com/bastie/w2ni18n.git w2n
+    # python3 setup.py install
+```
+
+Make sure you install all requirements given in requirements.txt
+
+```
+    pip3 install -r requirements.txt
+```
+
+
+#### Usage
+
+Add the word2number-i18n to requirements.txt in your project.
+First you have to import the module using the below code.
+
+    from word2numberi18n import w2n
+
+
+Then you can use the **word_to_num** method to convert a number-word to numeric digits, as shown below.
+
+```
+print(w2n.word_to_num("two million three thousand nine hundred and eighty four"))
+2003984
+```
+```
+print(w2n.word_to_num('two point three')) 
+2.3
+```
+```
+print(w2n.word_to_num('one hundred thirty-five')) 
+135
+```
+```
+print(w2n.word_to_num('million million'))
+Error: Redundant number! Please enter a valid number word (eg. two million twenty three thousand and forty nine)
+None
+```
+```
+print(w2n.word_to_num('blah'))
+Error: No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)
+None
+```
+
+
+#### i18n
+
+
+word2number looking for your specific language with
+
+    1. given parameter for language and if not found
+    2. defined environment variable w2n.lang with ISO lang code like en, hi, de and if not found
+    3. over locale.getdefaultlocale() and if not found
+    4. over environment variable "LANGUAGE" and if not found
+    5. fallback to english 
+    
+In result use it classic Python like (example unit_testing_ru.py):
+
+    os.environ['w2n.lang'] = 'ru'
+    w2n.word_to_num('две целых три десятых')
+
+Also work with object oriented Python like (example unit_testing_fr.py):
+
+    instance = w2n.W2N(lang_param="fr")
+    instance.word_to_num('trente-et-un')
+    
+
+
+
+    
+Place in the data directory your language specific dictionary file with ISO lang code in the name.
+   
+#### Develop package
 
 ```
     # python3 -m reuse lint
@@ -187,15 +199,15 @@ Make sure you install all requirements given in development.txt
     pip3 install -r development.txt
 ```
 
-## Java
+### Java
 
 Please note that these Java implementation is similar to Python and CSharp.
 
-### Installation
+#### Installation
 
 Download the latest version of word2number from GitHub.
 
-### Installation from source
+#### Installation from source
 
 On macOS
 
@@ -204,7 +216,7 @@ On macOS
     # ./w2n/java/src/build.sh
 ```
 
-### i18n
+#### i18n
 
 word2number looking for your specific language with
 
@@ -215,7 +227,7 @@ word2number looking for your specific language with
     
 Place in the data directory your language specific dictionary file with ISO lang code in the name.
    
-### Usage
+#### Usage
 
 Add the word2number-i18n to module-info.java in your project.
 
@@ -248,47 +260,20 @@ In result it prints
 ```
 
 
-#### Request new language
-
-Do follow steps
-
-    1. check your request (directory data), textfile name ISO-639-1 code
-    2. if not found check ISO-639-3 code
-    3. if not found create new file with new ISO-639-1/3 code
-
-##### Example
-You want to tranfer NLP CARD to numeric value for Lower Sorbian. German (de) isn't it. 
-You do not found an ISO-639-1 code, you do not found an ISO-639-1 file for ```dsb``` extension.
-You create a new file ```number_system_dsb.txt``` with utf-8 encoding
-
-```
-    null 0
-    jaden 1
-    dwa 2
-    tśi 3
-    styri 4
-    pěś 5
-    šesć 6
-    sedym 7
-    wósym 8
-    źewjeś 9
-    źaseś 10
-    [...]
-    point ,
-```
+#### Develop package
 
 Call the ``build.sh`` script and use the new ``w2ni18n-VERSION-.jar`` file
 
 
-## CSharp
+### CSharp
 
 Please note that these CSharp implementation is similar to Java and Python.
 
-### Installation
+#### Installation
 
 Download the latest version of word2number from nuget called w2ni18n.
 
-### Installation from source
+#### Installation from source
 
 On macOS
 
@@ -298,7 +283,7 @@ On macOS
     # ./build.sh
 ```
 
-### i18n
+#### i18n
 
 word2number looking for your specific language with
 
@@ -309,9 +294,7 @@ word2number looking for your specific language with
     
 Place in the data directory your language specific dictionary file with ISO lang code in the name.
    
-### Usage
-
-Add the word2number-i18n to module-info.java in your project.
+#### Usage
 
     dotnet add MyNextProject.csproj package w2ni18n
 
@@ -333,35 +316,7 @@ In result it prints
 1002023049.2369
 ```
 
-
-#### Request new language
-
-Do follow steps
-
-    1. check your request (directory data), textfile name ISO-639-1 code
-    2. if not found check ISO-639-3 code
-    3. if not found create new file with new ISO-639-1/3 code
-
-##### Example
-You want to tranfer NLP CARD to numeric value for Lower Sorbian. German (de) isn't it. 
-You do not found an ISO-639-1 code, you do not found an ISO-639-1 file for ```dsb``` extension.
-You create a new file ```number_system_dsb.txt``` with utf-8 encoding
-
-```
-    null 0
-    jaden 1
-    dwa 2
-    tśi 3
-    styri 4
-    pěś 5
-    šesć 6
-    sedym 7
-    wósym 8
-    źewjeś 9
-    źaseś 10
-    [...]
-    point ,
-```
+#### Develop package
 
 Call the ``build.sh`` script and use the new ``W2N.dll`` file
 

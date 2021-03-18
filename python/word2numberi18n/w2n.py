@@ -129,7 +129,7 @@ class W2N:
         # for examples: both is right "vingt et un" and "vingt-et-un"
         # we change this to composed value "vingt-et-un" over the localized data file "replace:" entry
         for non_composed_number_value, composed_number_value in self.normalize_data.items():
-            if non_composed_number_value.count(' ') >1:
+            if non_composed_number_value.count(' ') >0:
                 number_sentence = number_sentence.replace(non_composed_number_value, composed_number_value)
     
         return number_sentence.strip()
