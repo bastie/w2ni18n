@@ -57,7 +57,7 @@ class English {
       Assertions.assertEquals(new W2N().wordToNum("seven million, eight hundred, and sixty three thousand, two hundred, and fifty four"), 7863254);
 
       // test cases https://github.com/akshaynagpal/w2n/issues/54
-      Assertions.assertEquals(new W2N().wordToNum("three point nine seven"), 3.97);
+      Assertions.assertEquals(new W2N("en").wordToNum("three point nine seven"), 3.97);
       Assertions.assertEquals(new W2N().wordToNum("two point seven eight"), 2.78);
       Assertions.assertEquals(new W2N().wordToNum("one point eight six"), 1.86);
       Assertions.assertEquals(new W2N().wordToNum("two point seven two"), 2.72);

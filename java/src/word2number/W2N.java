@@ -53,9 +53,15 @@ public class W2N {
    */
   private final String lang;
   
-  public W2N () {
+  /**
+   * Construct new W2N instance with optional parameter for language.
+   * @param langParam optional language parameter
+   */
+  public W2N (String... langParam) {
     try {
       String newLang = null;
+      if (null != langParam && langParam.length > 0)
+        newLang = langParam[0];
       if (System.getenv("w2n.lang") != null)
         newLang = System.getenv("w2n.lang");
       if (newLang == null)
