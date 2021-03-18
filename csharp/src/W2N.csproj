@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
-      <Version>1.0.0</Version>
+      <Version>1.1.0</Version>
       <PackageId>w2ni18n</PackageId>
       <Title>word2number-i18n</Title>
       <Authors>Sebastian Ritter</Authors>
@@ -19,7 +19,7 @@
 
       <RepositoryUrl>https://github.com/bastie/w2ni18n.git</RepositoryUrl>
       <PackageSummary>Convert number words to numeric values.</PackageSummary>
-      <copyright>Copyright 2021 Sebastian Ritter</copyright>
+      <copyright>Copyright 2020-2021 Sebastian Ritter</copyright>
 
     </PropertyGroup>
   
