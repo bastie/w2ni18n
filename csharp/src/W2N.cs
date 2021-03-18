@@ -31,7 +31,7 @@ namespace word2number
   
   private readonly String lang;
   
-  public W2N () {
+  public W2N (String langParam = null) {
     String newLang = null;
     if (Environment.GetEnvironmentVariable("w2n.lang") != null)
     newLang = Environment.GetEnvironmentVariable("w2n.lang");
