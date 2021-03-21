@@ -4,3 +4,5 @@
 ## Mac: $ brew install vala
 ## Meson build system
 ## Mac: $ brew install meson
+## gee Library
+## Mac: $ brew install libgee
