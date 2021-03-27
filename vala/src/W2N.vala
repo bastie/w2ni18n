@@ -139,8 +139,10 @@ class word2number.W2N : GLib.Object {
     * @param newNumberValue numberValue
     * @return Number or null
     */
-    public long wordToNum_from_long (long newNumberValue) {
-        return newNumberValue;
+    public Value wordToNum_from_long (long newNumberValue) {
+      var result = Value(typeof(long));
+      result.set_long (newNumberValue);
+      return result;
     }
   
   /**
@@ -463,16 +465,65 @@ class word2number.W2N : GLib.Object {
 
       try {
         W2N instance = new W2N();
-        
-        stdout.printf (instance.wordToNum_from_long(777L).to_string()+"\n");
-        stdout.printf (instance.wordToNum_from_string("two million three thousand nine hundred and eighty four").get_long().to_string());
-        stdout.printf (instance.wordToNum_from_string("nine point nine nine nine").get_double().to_string());
+
+        assert_equal (instance.wordToNum_from_long(777L),"777");
+        assert_equal (instance.wordToNum_from_string("nineteen"), "19");
+        assert_equal (instance.wordToNum_from_string("two thousand and nineteen"), "2019");
+        assert_equal (instance.wordToNum_from_string("two million three thousand and nineteen"), "2003019");
+        assert_equal (instance.wordToNum_from_string("three billion"), "3000000000");
+        assert_equal (instance.wordToNum_from_string("three million"), "3000000");
+        assert_equal (instance.wordToNum_from_string("one hundred twenty three million four hundred fifty six thousand seven hundred and eighty nine"), "123456789");
+        assert_equal (instance.wordToNum_from_string("eleven"), "11");
+        assert_equal (instance.wordToNum_from_string("nineteen billion and nineteen"), "19000000019");
+        assert_equal (instance.wordToNum_from_string("one hundred and forty two"), "142");
+        assert_equal (instance.wordToNum_from_long(112), "112");
+        assert_equal (instance.wordToNum_from_long(11211234), "11211234");
+        assert_equal (instance.wordToNum_from_string("five"), "5");
+        assert_equal (instance.wordToNum_from_string("two million twenty three thousand and forty nine"), "2023049");
+        assert_equal (instance.wordToNum_from_string("two point three"), "2.3");
+        assert_equal (instance.wordToNum_from_string("two million twenty three thousand and forty nine point two three six nine"), "2023049.2369");
+        assert_equal (instance.wordToNum_from_string("one billion two million twenty three thousand and forty nine point two three six nine"), "1002023049.2369");
+        assert_equal (instance.wordToNum_from_string("nine trillion one billion two million twenty three thousand and forty nine point two three six nine"), "9001002023049.2369");
+        assert_equal (instance.wordToNum_from_string("point one"), "0.1");
+        assert_equal (instance.wordToNum_from_string("point"), "0");
+        assert_equal (instance.wordToNum_from_string("point nineteen"), "0");
+        assert_equal (instance.wordToNum_from_string("one hundred thirty-five"), "135");
+        assert_equal (instance.wordToNum_from_string("hundred"), "100");
+        assert_equal (instance.wordToNum_from_string("thousand"), "1000");
+        assert_equal (instance.wordToNum_from_string("million"), "1000000");
+        assert_equal (instance.wordToNum_from_string("billion"), "1000000000");
+        assert_equal (instance.wordToNum_from_string("trillion"), "1000000000000");
+        assert_equal (instance.wordToNum_from_string("one million and thousand"), "1001_000");
+        assert_equal (instance.wordToNum_from_string("nine point nine nine nine"), "9.999");
+        assert_equal (instance.wordToNum_from_string("seventh point nineteen"), "0");
+        assert_equal (instance.wordToNum_from_string("seven million, eight hundred, and sixty three thousand, two hundred, and fifty four"), "7863254");
+        assert_equal (instance.wordToNum_from_string("two hundreds"), "200");
+
+
+        println (instance.wordToNum_from_string("nine point nine nine nine"));
       }
       catch (NumberFormatException ignored) {
-        stdout.printf ("Errorrrr");
+        stderr.printf ("Errorrrr");
+        return 6;
       }
 
       return 0;
   }
 
+}
+
+
+private void assert_equal (Value actually, string expected) {
+  if (expected != pretty(actually)) {
+    var not_so_nice = pretty(actually);
+    stdout.printf (@"Assertation error for\nexpected:$(expected)\nactually:$(not_so_nice)\n");
+    Process.exit(666);
+  }
+}
+private void println (Value result) {
+  var nice_looking = pretty(result);
+  stdout.printf (@"$(nice_looking)\n");
+}
+private string pretty (Value dirty) {
+  return dirty.type_name() == "glong" ? dirty.get_long().to_string() : dirty.get_double().to_string ();
 }
