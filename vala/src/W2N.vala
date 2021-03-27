@@ -88,7 +88,6 @@ class word2number.W2N : GLib.Object {
     * @return value: integer
     */
     protected int numberFormation (ArrayList<string> numberWords) {
-
         ArrayList<int> digitValues = new ArrayList<int>();
         // calculate the three digit values (max)
         foreach (string word in numberWords) {
@@ -100,17 +99,17 @@ class word2number.W2N : GLib.Object {
             digitValues.remove(digitValues[1]);
         }
         if ((digitValues.size > 3) && (digitValues[0] < 100)) {
-        digitValues[0] *= digitValues[1];
-        digitValues.remove(digitValues[1]);
+          digitValues[0] *= digitValues[1];
+          digitValues.remove(digitValues[1]);
         }
         else if ((digitValues.size > 3) && (digitValues[0] > 100)) {
-            digitValues[1] *= digitValues[2];
-            digitValues.remove(digitValues[2]);
+          digitValues[1] *= digitValues[2];
+          digitValues.remove(digitValues[2]);
         }
         // add the three digits
         while (digitValues.size > 1) {
-            digitValues[0] += digitValues[1];
-            digitValues.remove(digitValues[1]);
+          digitValues[0] = digitValues[0] + digitValues[1];
+          digitValues.remove(digitValues[1]);
         }
         // return the result
 
@@ -150,32 +149,40 @@ class word2number.W2N : GLib.Object {
    * @return Number, prefered Long and Double, or null
    */
    public Value wordToNum_from_string (string newNumberSentence) throws NumberFormatException {
+
       long long_result = -1; 
       double double_result = -1d;
       ArrayList<string> cleanNumbers = new ArrayList<string>();
       ArrayList<string> cleanDecimalNumbers = new ArrayList<string>();
 
-    if (null == newNumberSentence)
-      throw new NumberFormatException.FormatException("Type of input is null! Please enter a valid number word (eg. \'two million twenty three thousand and forty nine\')");
+      if (null == newNumberSentence)
+        throw new NumberFormatException.FormatException("Type of input is null! Please enter a valid number word (eg. \'two million twenty three thousand and forty nine\')");
 
-    string numberSentence = this.normalize(newNumberSentence.to_string());
+      string numberSentence = this.normalize(newNumberSentence.to_string());
 
-    // return the number if user enters a number string
-    long tempLong = -1;
-    if (long.parse(numberSentence).to_string() == numberSentence) {
-      long_result = long.parse(numberSentence);
-    }
-    else {
-        double tempDouble;
-        if (double.try_parse(numberSentence, out tempDouble)) {
-            double_result = tempDouble;
-        }
-    }
+      // return the number if user enters a number string
+      long tempLong = -1;
+      if (long.parse(numberSentence).to_string() == numberSentence) {
+        long_result = long.parse(numberSentence);
+      }
+      else {
+          double tempDouble;
+          if (double.try_parse(numberSentence, out tempDouble)) {
+              double_result = tempDouble;
+          }
+      }
 
-    bool isDigit = long_result < 0 || double_result < 0;; // maybe to optimize by compiler but to similar code to python 
+      bool isDigit = long_result >= 0 || double_result >= 0; // maybe to optimize by compiler but to similar code to python 
     if (!isDigit) {
-      string [] splitWords = Regex.split_simple("[\\s,]+",numberSentence); // strip extra spaces and comma and than split sentence into words
-      
+      string [] splitWords = new string [0];
+      try {
+        var regex = new Regex ("[\\s,]+");
+        splitWords = regex.split_full (numberSentence);
+      }
+      catch (Error error) {
+        throw new NumberFormatException.FormatException (@"$(error.message)");
+      }
+
       // removing and, & etc.
       foreach (string word in splitWords) {
         if (this.numberSystem.has_key(word)) {
@@ -186,16 +193,15 @@ class word2number.W2N : GLib.Object {
         }
       }
 
-  
       // Error message if the user enters invalid input!
       if (cleanNumbers.size== 0) 
           throw new NumberFormatException.FormatException("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
-
+      
       bool toMuchPoints = cleanNumbers.index_of(this.localizedPointName) != last_index_of(cleanNumbers,this.localizedPointName);
       if (toMuchPoints)
         throw new NumberFormatException.FormatException(@"Redundant point word $localizedPointName! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
   
-      // separate decimal part of number (if exists)
+        // separate decimal part of number (if exists)
       bool pointCount = cleanNumbers.index_of(this.localizedPointName)>-1;
       if (pointCount) {
         var temp_clean_decimal_numbers = new ArrayList<string>();
@@ -282,8 +288,8 @@ class word2number.W2N : GLib.Object {
     }
     if (double_result <0) { // ok than double not set it is -1
         if (long_result < int.MAX &&
-          long_result > int.MIN) {
-            long_result = (int)tempLong;
+            long_result > int.MIN) {
+            long_result = (int)long_result;
         }
     }    
 
@@ -398,11 +404,11 @@ class word2number.W2N : GLib.Object {
     return cleanNumbers.index_of(localizedName);
   }
   
-  /**
-   * Method to get the pre-decimal number from clean_number
-   * @param sorted list with number words
-   * @return number
-   */
+      /**
+      * Method to get the pre-decimal number from clean_number
+      * @param sorted list with number words
+      * @return number
+      */
       protected long getNumberValue (ArrayList<string> cleanNumbers) {
         long result = 0L;
 
@@ -432,9 +438,10 @@ class word2number.W2N : GLib.Object {
           int measureValueIndex = getIndexForNumber(measureValue, cleanNumbers);
           if (measureValueIndex > -1){
             result +=  getMeasureMultiplier(measureValueIndex, cleanNumbers) * measureValue;
-            var temp_clean_numbers = new ArrayList<string>();
-            temp_clean_numbers.add_all (cleanNumbers.slice(measureValueIndex+1,cleanNumbers.size));
-            cleanNumbers = temp_clean_numbers;
+            // we remove next manually the leading elements from lsit
+            for (int i = 0 ; i <= measureValueIndex; i++) {
+              cleanNumbers.remove_at(0);
+            }
           }
         }
         // Now we add the value of less then hundred
@@ -442,7 +449,6 @@ class word2number.W2N : GLib.Object {
           int multiplier = this.numberFormation(cleanNumbers);
           result +=  multiplier * 1;
         }
-stderr.printf ("CCCC"+result.to_string());
 
         return result;
       }
@@ -457,8 +463,10 @@ stderr.printf ("CCCC"+result.to_string());
 
       try {
         W2N instance = new W2N();
+        
         stdout.printf (instance.wordToNum_from_long(777L).to_string()+"\n");
         stdout.printf (instance.wordToNum_from_string("two million three thousand nine hundred and eighty four").get_long().to_string());
+        stdout.printf (instance.wordToNum_from_string("nine point nine nine nine").get_double().to_string());
       }
       catch (NumberFormatException ignored) {
         stdout.printf ("Errorrrr");
