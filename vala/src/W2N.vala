@@ -287,7 +287,6 @@ class word2number.W2N : GLib.Object {
         }
     }    
 
-
     // in result of given value, we want to give our return in dynamic way
     if (double_result <0) {
       Value return_value = Value (typeof (long));
@@ -311,20 +310,6 @@ class word2number.W2N : GLib.Object {
     }
     return -1;
   }
-
-  /**
-     * The programm entry
-     */
-    public static int main(string[] args) {
-        // next set the relative path for later file loading
-        W2N.data_source = args[0].substring(0,(args[0].char_count() - "W2N".char_count()));
-
-        stdout.printf("Hello, World\n");
-
-        W2N instance = new W2N();
-
-        return 0;
-    }
 
     /**
     * Method to normalize the whole(!) input text
@@ -360,7 +345,7 @@ class word2number.W2N : GLib.Object {
    * <br/> example 2: check_double_input (1000, "thousand thousand") with lang="de" its ok
    * <br/> example 3: check_double_input (1000, "tausend tausend") with lang="de" throws a FormatException
    */
-  protected void checkDoubleInput(long newNumber, ArrayList<string> cleanNumbers) {
+  protected void checkDoubleInput(long newNumber, ArrayList<string> cleanNumbers) throws NumberFormatException {
     string localizedName =  this.getNameByNumberValue(newNumber);
     
     bool countGreaterOne = cleanNumbers.index_of(localizedName) != last_index_of(cleanNumbers,localizedName);
@@ -457,9 +442,29 @@ class word2number.W2N : GLib.Object {
           int multiplier = this.numberFormation(cleanNumbers);
           result +=  multiplier * 1;
         }
+stderr.printf ("CCCC"+result.to_string());
 
         return result;
       }
 
+
+    /**
+     * The programm entry
+     */
+     public static int main(string[] args) {
+      // next set the relative path for later file loading
+      W2N.data_source = args[0].substring(0,(args[0].char_count() - "W2N".char_count()));
+
+      try {
+        W2N instance = new W2N();
+        stdout.printf (instance.wordToNum_from_long(777L).to_string()+"\n");
+        stdout.printf (instance.wordToNum_from_string("two million three thousand nine hundred and eighty four").get_long().to_string());
+      }
+      catch (NumberFormatException ignored) {
+        stdout.printf ("Errorrrr");
+      }
+
+      return 0;
+  }
 
 }
