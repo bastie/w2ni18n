@@ -6,7 +6,7 @@ project('W2N project',
 target_vala = '0.52'
 
 
-glib = dependency('glib-2.0', version: '>=2.62')
+glib = dependency('glib-2.0')
 gobject = dependency('gobject-2.0')
 gee = dependency('gee-0.8')
 
