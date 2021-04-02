@@ -465,7 +465,7 @@ class word2number.W2N : GLib.Object {
 
       try {
         W2N instance = new W2N();
-
+        // integer values
         assert_equal (instance.wordToNum_from_long(777L),"777");
         assert_equal (instance.wordToNum_from_string("nineteen"), "19");
         assert_equal (instance.wordToNum_from_string("two thousand and nineteen"), "2019");
@@ -480,30 +480,32 @@ class word2number.W2N : GLib.Object {
         assert_equal (instance.wordToNum_from_long(11211234), "11211234");
         assert_equal (instance.wordToNum_from_string("five"), "5");
         assert_equal (instance.wordToNum_from_string("two million twenty three thousand and forty nine"), "2023049");
-        assert_equal (instance.wordToNum_from_string("two point three"), "2.3");
-        assert_equal (instance.wordToNum_from_string("two million twenty three thousand and forty nine point two three six nine"), "2023049.2369");
-        assert_equal (instance.wordToNum_from_string("one billion two million twenty three thousand and forty nine point two three six nine"), "1002023049.2369");
-        assert_equal (instance.wordToNum_from_string("nine trillion one billion two million twenty three thousand and forty nine point two three six nine"), "9001002023049.2369");
-        assert_equal (instance.wordToNum_from_string("point one"), "0.1");
-        assert_equal (instance.wordToNum_from_string("point"), "0");
-        assert_equal (instance.wordToNum_from_string("point nineteen"), "0");
         assert_equal (instance.wordToNum_from_string("one hundred thirty-five"), "135");
         assert_equal (instance.wordToNum_from_string("hundred"), "100");
         assert_equal (instance.wordToNum_from_string("thousand"), "1000");
+        println (instance.wordToNum_from_string("nine point nine nine nine"));
         assert_equal (instance.wordToNum_from_string("million"), "1000000");
         assert_equal (instance.wordToNum_from_string("billion"), "1000000000");
         assert_equal (instance.wordToNum_from_string("trillion"), "1000000000000");
-        assert_equal (instance.wordToNum_from_string("one million and thousand"), "1001_000");
-        assert_equal (instance.wordToNum_from_string("nine point nine nine nine"), "9.999");
-        assert_equal (instance.wordToNum_from_string("seventh point nineteen"), "0");
+        assert_equal (instance.wordToNum_from_string("one million and thousand"), "1001000");
         assert_equal (instance.wordToNum_from_string("seven million, eight hundred, and sixty three thousand, two hundred, and fifty four"), "7863254");
         assert_equal (instance.wordToNum_from_string("two hundreds"), "200");
+        // non number points
+        assert_equal (instance.wordToNum_from_string("point"), "0");
+        assert_equal (instance.wordToNum_from_string("point nineteen"), "0");
+        assert_equal (instance.wordToNum_from_string("seventh point nineteen"), "0");
+        // decimal value
+        assert_equal (instance.wordToNum_from_string("two million twenty three thousand and forty nine point two three six nine"), "2023049.2369");
+        assert_equal (instance.wordToNum_from_string("one billion two million twenty three thousand and forty nine point two three six nine"), "1002023049.2369");
+        assert_equal (instance.wordToNum_from_string("nine trillion one billion two million twenty three thousand and forty nine point two three six nine"), "9001002023049.2369");
+        assert_equal (instance.wordToNum_from_string("two point three"), "2.3");
+        assert_equal (instance.wordToNum_from_string("point one"), "0.1");
+        assert_equal (instance.wordToNum_from_string("nine point nine nine nine"), "9.999");
 
 
-        println (instance.wordToNum_from_string("nine point nine nine nine"));
       }
       catch (NumberFormatException ignored) {
-        stderr.printf ("Errorrrr");
+        stderr.printf (@"Errorrrr: $(ignored.message)\n");
         return 6;
       }
 
