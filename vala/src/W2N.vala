@@ -354,11 +354,12 @@ class word2number.W2N : GLib.Object {
    * <br/> example 3: check_double_input (1000, "tausend tausend") with lang="de" throws a FormatException
    */
   protected void checkDoubleInput(long newNumber, ArrayList<string> cleanNumbers) throws NumberFormatException {
-    string localizedName =  this.getNameByNumberValue(newNumber);
-    
-    bool countGreaterOne = cleanNumbers.index_of(localizedName) != last_index_of(cleanNumbers,localizedName);
-    if (countGreaterOne)
-        throw new NumberFormatException.FormatException (@"Redundant number word $localizedName in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
+    if (cleanNumbers.size > 1) { // TODO Backport
+      string localizedName =  this.getNameByNumberValue(newNumber);
+      bool countGreaterOne = cleanNumbers.index_of(localizedName) != last_index_of(cleanNumbers,localizedName);
+      if (countGreaterOne)
+          throw new NumberFormatException.FormatException (@"Redundant number word $localizedName in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
+    }
   }
   
 
