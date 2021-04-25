@@ -8,8 +8,6 @@ namespace test.word2number
 {
 
     /// <summary>
-    /// This test throws compiler error if not supported.
-    /// So last call is Assert.True(true);
     /// </summary>
     public class English
     {

@@ -8,7 +8,7 @@ def read_file(fname):
 
 setuptools.setup(
     name="word2number-i18n",
-    version="1.1.0",
+    version="1.2.0",
     description="Convert number words from different languages with Python, CSharp or Java API eg. three hundred and forty two to numbers (342) or vingt-et-un (21) or две целых три десятых (2.3).",
     long_description=read_file("../README.md"),
     long_description_content_type='text/markdown',

@@ -1,8 +1,8 @@
 # Word to Number i18n
 
-**Word to Number i18n** is a full new implementation of great Python word2number module for English sentences. In result of this work it
+**Word to Number i18n** is a full new implementation of great Python word2number module for English and other languages sentences. In result of this work it
 
-- support non-english languages
+- support non-english languages (es, fr, ru, sk - yes and en)
 - provide the business logic as
     - Java Archiv
     - Python Module

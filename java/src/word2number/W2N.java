@@ -346,8 +346,16 @@ public class W2N {
         numberSentence = numberSentence.replace(nonComposedNumberValue, composedNumberValue);
       }
     }
+    // TODO: CHECK: Why run Python without next part?
+    StringBuilder result = new StringBuilder();
+    for (String word : numberSentence.split("[\\s,]+")) {
+      if (this.normalizeData.containsKey(word)) {
+        word = this.normalizeData.get(word);
+      }
+      result.append(word).append(" ".intern());
+    }
     
-    return numberSentence.trim();
+    return result.toString().trim();
   }
   
   

@@ -320,8 +320,22 @@ namespace word2number
         numberSentence = numberSentence.Replace(nonAndComposedNumber.Key, nonAndComposedNumber.Value);
       }
     }
+    // TODO: CHECK: Why run Python without next part?
+    StringBuilder result = new StringBuilder();
+    String [] splitWords = Regex.Split(numberSentence,"[\\s,]+"); // strip extra spaces and comma and than split sentence into words
+
+    foreach (String word in splitWords) {
+      if (this.normalizeData.ContainsKey(word)) {
+        String newWord;
+        this.normalizeData.TryGetValue(word,out newWord);
+        result.Append(newWord).Append(" ");
+      }
+      else {
+        result.Append(word).Append(" ");
+      }
+    }
     
-    return numberSentence.Trim();
+    return result.ToString().Trim();
   }
   
   

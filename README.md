@@ -16,6 +16,7 @@ Below is the installation, usage and other details of this module.
 * French
 * Portugues
 * Russian
+* Slovak
 * Spanish
 
 
@@ -332,7 +333,7 @@ Call the ``build.sh`` script and use the new ``W2N.dll`` file
 
 
 ## Thanks
-Thanks to word2number coder and contributors 
+Thanks to word2number i18n coder and contributors 
 - Akshay Nagpal [akshaynagpal](https://github.com/akshaynagpal)
 - Ben Batorsky [bpben](https://github.com/bpben)
 - Alex [ledovsky](https://github.com/ledovsky)
@@ -340,6 +341,7 @@ Thanks to word2number coder and contributors
 - ButteredGroove [ButteredGroove](https://github.com/ButteredGroove)
 - Jonathan Nelson [jnelsen16](https://github.com/jnelson16)
 - Daniel Junior [danieljunior](https://github.com/danieljunior)
+- Kristian Toldy [KToldy](https://github.com/KToldy)
 
 ## License
 The MIT License (MIT)
