@@ -7,8 +7,8 @@ Below is the installation, usage and other details of this module.
 ## Fun with numbers
 
 * French: We can calculate! So 4*20+10 are 90 and this is normal (quatre-vingt-dix).
-* German: We have our own rules. All under million is one word (but often false written) and also we say for 21 onetwenty (einunzwanzig) not twenty one.
-* Spanish: Less is more, we need no word for 1.000.000.000 as word an says mil millón (for example tres mil millones).
+* German: We have our own rules. All under million is one word (but often false written) and also we say for 21 oneandtwenty (einundzwanzig) not twenty (and) one.
+* Spanish: Less is more, we need no word for 1.000.000.000 and say mil millón (for example tres mil millones).
 
 ## Supported natural languages
 

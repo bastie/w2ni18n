@@ -54,6 +54,7 @@ This is a part-feature-list of some features you would be see in result of compa
 ### Vala
 - Nice using of ``??`` operator to ``null`` check like ``string withValue = nullableString ?? "value";``
 - It is not posible with Gee 0.8 to give an other Collection in constructor and so ``add_all (an_other_collection);`` is a little bit more to coding...
+- It isn't important where you ``main`` program method is - maybe in class, perhaps outside.
 
 ## Test system
 
