@@ -84,6 +84,9 @@ class TestW2N(unittest.TestCase):
         #https://github.com/akshaynagpal/w2n/issues/58
         self.assertEqual(w2n.word_to_num("Example title - Chapter One Hundred Fifteen"), 115)
         self.assertEqual(w2n.word_to_num("Example title - Ninety-Eight"), 98)
+        
+        #https://github.com/akshaynagpal/w2n/issues/61
+        self.assertEqual(w2n.word_to_num("thirty-four hundred and fifty"), 3450)
 
     def test_negatives_en(self):
         self.assertRaises(ValueError, w2n.word_to_num, '112-')
