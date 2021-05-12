@@ -41,7 +41,7 @@ class W2N:
         
         # Now analyse the configuration file for the local spoken language
         data_file = os.path.dirname(__file__)+os.sep+"data"+os.sep+"config_"+lang+".properties"
-        with codecs.open(data_file, "rU", encoding="utf-8") as number_system_data:
+        with codecs.open(data_file, "r", encoding="utf-8") as number_system_data:
             for line in number_system_data:
                 if line.startswith('#'):
                     pass
