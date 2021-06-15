@@ -38,6 +38,7 @@ class W2N:
         if lang is None:
             lang = "en"  # fallback
         lang = lang[:2]
+        self.lang = lang
 
         self.point_char = "."
         if lang is "gr":
@@ -329,7 +330,7 @@ class W2N:
             # And add the post-decimal value
             if len(clean_decimal_numbers) > 0:
                 total_sum_as_string = str(result)+self.point_char+str(self.get_decimal_string(clean_decimal_numbers))
-                if lang != "gr":
+                if self.lang != "gr":
                     result = float(total_sum_as_string)
     
         return result
