@@ -38,12 +38,6 @@ class W2N:
         if lang is None:
             lang = "en"  # fallback
         lang = lang[:2]
-        self.lang = lang
-
-        self.point_char = "."
-        if lang is "gr":
-            self.point_char = ","
-
         
         # Now analyse the configuration file for the local spoken language
         data_file = os.path.dirname(__file__)+os.sep+"data"+os.sep+"config_"+lang+".properties"
@@ -329,9 +323,8 @@ class W2N:
             
             # And add the post-decimal value
             if len(clean_decimal_numbers) > 0:
-                total_sum_as_string = str(result)+self.point_char+str(self.get_decimal_string(clean_decimal_numbers))
-                if self.lang != "gr":
-                    result = float(total_sum_as_string)
+                total_sum_as_string = str(result)+"."+str(self.get_decimal_string(clean_decimal_numbers))
+                result = float(total_sum_as_string)
     
         return result
 
