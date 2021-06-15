@@ -329,7 +329,8 @@ class W2N:
             # And add the post-decimal value
             if len(clean_decimal_numbers) > 0:
                 total_sum_as_string = str(result)+self.point_char+str(self.get_decimal_string(clean_decimal_numbers))
-                result = float(total_sum_as_string)
+                if not lang == "gr":
+                    result = float(total_sum_as_string)
     
         return result
 
