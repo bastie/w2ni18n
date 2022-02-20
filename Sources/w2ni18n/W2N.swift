@@ -7,28 +7,20 @@
  Word2Number type
  */
 public struct W2N {
+    
+    fileprivate var number_system = {}
+    fileprivate var normalize_data = {}
+    fileprivate var sorted_measure_values : [Int] = [] // = [1_000_000_000_000,1_000_000_000,1_000_000,1_000,100]
+    fileprivate var localizedPointName = ""
+    fileprivate var decimal_words : [String] = []
+    
+    internal var lang : String? = "en"
+    
     public private(set) var text = "Hello, World!"
 
-    public init() {
-    }
-}
-
-
-
-
-class W2N:
-    
-    number_system = {}
-    normalize_data = {}
-    sorted_measure_values = []// = [1_000_000_000_000,1_000_000_000,1_000_000,1_000,100]
-    localizedPointName = ""
-    decimal_words = []
-    
-    lang = "en"
-    
-    def __init__ (self, lang_param):
+    public init (_ language : String?) {
         // first get programming language specific local spoken language
-        lang = lang_param
+        lang = language
         if lang is None:
             lang = locale.getlocale()[0]
         if "w2n.lang" in os.environ:
@@ -66,13 +58,13 @@ class W2N:
         self.sorted_measure_values = sorted(self.sorted_measure_values,reverse=True)
         self.decimal_words = list(self.number_system.keys())[:10]
         
+    }
+    /** [internal] function to form numeric multipliers
     
-            /*""" [internal] function to form numeric multipliers
-            
-            input: list of strings
-            return value: integer
-            """*/
-    def number_formation(self, number_words):
+    input: list of strings
+    return value: integer
+    */
+    fileprivate func number_formation(number_words : [String]) -> Int {
         digit_values = []
         // calculate the three digit values (max)
         for word in number_words:
@@ -95,15 +87,15 @@ class W2N:
             del digit_values[1]
         // return the result
         return digit_values[0]
+    }
     
+    /** [internal] function to convert post decimal digit words to numerial digits
+    it returns a string to prevert from floating point conversation problem
     
-    def get_decimal_string(self, decimal_digit_words):
-        /* [internal] function to convert post decimal digit words to numerial digits
-        it returns a string to prevert from floating point conversation problem
-        
-        input: list of strings
-        output: string
-        */
+    input: list of strings
+    output: string
+    **/
+    fileprivate func get_decimal_string(decimal_digit_words : [String]) -> String {
         decimal_number_str = []
         for dec_word in decimal_digit_words:
             if(dec_word not in self.decimal_words):
@@ -112,15 +104,15 @@ class W2N:
                 decimal_number_str.append(self.number_system[dec_word])
         final_decimal_string = ''.join(map(str, decimal_number_str))
         return final_decimal_string
+    }
+
+    /** [internal] function to normalize the whole(!) input text
+    note: float or int parameters are allowed
     
-    
-    def normalize(self, number_sentence):
-        /* [internal] function to normalize the whole(!) input text
-        note: float or int parameters are allowed
-        
-        input: string the full text
-        output: string
-        */
+    input: string the full text
+    output: string
+    */
+    fileprivate func normalize(number_sentence : String) -> String {
         // we need no check for numbers...
         if type(number_sentence) is float:
             return number_sentence
@@ -137,63 +129,69 @@ class W2N:
                 number_sentence = number_sentence.replace(non_composed_number_value, composed_number_value)
     
         return number_sentence.strip()
+    }
+
     
+    /** [internal] function to check false redundant input
+    note: this method has language configuration dependency
     
-    def check_double_input (self, new_number, clean_numbers):
-        /* [internal] function to check false redundant input
-        note: this method has language configuration dependency
-        
-        note: call this after lemma text
-        
-        example: check_double_input (1000, "thousand thousand") with lang="en" throws a ValueError
-        example: check_double_input (1000, "thousand thousand") with lang="de" its ok
-        example: check_double_input (1000, "tausend tausend") with lang="de" throws a ValueError
-        
-        input: int new_number, string[] words - looking for count of localized name of new_numerb in words
-        raise: if redundant input error
-        */
+    note: call this after lemma text
+    
+    example: check_double_input (1000, "thousand thousand") with lang="en" throws a ValueError
+    example: check_double_input (1000, "thousand thousand") with lang="de" its ok
+    example: check_double_input (1000, "tausend tausend") with lang="de" throws a ValueError
+    
+    input: int new_number, string[] words - looking for count of localized name of new_numerb in words
+    raise: if redundant input error
+    */
+    fileprivate func check_double_input (new_number : Int, clean_numbers : [String]) {
         localized_name = self.get_name_by_number_value(new_number)
-        countGreaterOne = clean_numbers.count(localized_name) > 1  # in result of same logic like Java extra step insert
+        countGreaterOne = clean_numbers.count(localized_name) > 1  // in result of same logic like Java extra step insert
         if countGreaterOne:
             raise ValueError(f"Redundant number word {localized_name} in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
             // i18n save für later:
             // de: "Redundantes Nummernwort! Bitte gebe ein zulässiges Nummernwort ein (z.B. zwei Millionen Dreiundzwanzigtausend und Neunundvierzig)"
             // ru: "Избыточное числовое слово! Введите правильное числовое слово (например, два миллиона двадцать три тысячи сорок девять)"
     
+    }
+
     
-    def get_name_by_number_value (self, new_number):
-        /* [internal] function to get the localized name form value
-        
-        input: numeric value
-        output: name from language configuration or None if not found
-        */
+    /** [internal] function to get the localized name form value
+    
+    input: numeric value
+    output: name from language configuration or None if not found
+    */
+    fileprivate func get_name_by_number_value (new_number : Numeric) -> String? {
         for number_name, number_value in self.number_system.items():
             if new_number == number_value:
                 return number_name
         return None
+    }
     
+
+
     
-    def get_index_for_number(self, new_number, clean_numbers):
-        /* [internal] function to get the index of name for given number
-            note: call this after lemma text
+    /* [internal] function to get the index of name for given number
+        note: call this after lemma text
+
+        input: int number
+        output: index or -1 if not found
     
-            input: int number
-            output: index or -1 if not found
-        
-        */
+    */
+    fileprivate func get_index_for_number(new_number : Int, clean_numbers) -> Inte {
         // in result of get name by numeric value, the localized name came from dictionary
         // and we need no language specific code
         localized_name = self.get_name_by_number_value(new_number)
         return clean_numbers.index(localized_name) if localized_name in clean_numbers else -1
+    }
     
+    /* [internal] function to get the pre-decimal number from clean_number
     
-    def get_number_value (self, clean_numbers):
-        /* [internal] function to get the pre-decimal number from clean_number
-        
-            input: sorted array with number words
-            output: int number
-            raise: ValueError
-        */
+        input: sorted array with number words
+        output: int number
+        raise: ValueError
+    */
+    fileprivate func get_number_value (clean_numbers : [String]) -> Int {
         result = 0
     
         /*
@@ -233,32 +231,36 @@ class W2N:
         
         return result
     
+   }
+
+    /* [internal] function to get the value for the measure aka 1000, 1_000_000 ...
     
-    def get_measure_multiplier (self, measure_index :int, clean_numbers):
-        /* [internal] function to get the value for the measure aka 1000, 1_000_000 ...
-        
-        input: index of measure
-        output: multiplier for measure
-        */
+    input: index of measure
+    output: multiplier for measure
+    */
+    fileprivate func get_measure_multiplier (measure_index : Int, clean_numbers) -> Int {
         param = clean_numbers[0:measure_index]
         param = param if len(param)>0 else {self.get_name_by_number_value(1)}
         multiplier = self.number_formation(param)
         return multiplier
     
+    }
     
-    def word_to_num(self, number_sentence):
-        /* public function to return integer for an input `number_sentence` string
-        This function return as result
-        - the same float if float is input
-        - the same int if int is given
-        - None if no number can be extracted
-        - ValueError if extracted number is formal incorrect
+ 
     
-        preconditions: number_sentence is type of float, int or str
-        input: string
-        output: int or float or None
-        raise: given number is formal incorrect
-        */
+    /** public function to return integer for an input `number_sentence` string
+    This function return as result
+    - the same float if float is input
+    - the same int if int is given
+    - None if no number can be extracted
+    - ValueError if extracted number is formal incorrect
+
+    preconditions: number_sentence is type of float, int or str
+    input: string
+    output: int or float or None
+    raise: given number is formal incorrect
+    */
+    public func word_to_num(number_sentence : String) -> Numeric {
         result = None
         clean_numbers = []
         clean_decimal_numbers = []
@@ -331,10 +333,13 @@ class W2N:
                 result = float(total_sum_as_string)
     
         return result
+    }
+}
 
-def word_to_num(number_sentence, lang_param=None):
-    instance = W2N(lang_param)
-    return instance.word_to_num(number_sentence)
+func word_to_num (numberSentence : String, langParam : String?) {
+    let instance = W2N(langParam)
+    return instance.word_to_num(numberSentence)
+}
 
 //EOF
 
