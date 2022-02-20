@@ -146,32 +146,49 @@ public class W2N {
         return decimalNumberString
     }
 
+    /*
+     typesafe language unlike Python
+     */
+    fileprivate func normalize (numberSentence : Float) -> String {
+        return String(numberSentence)
+    }
+    /*
+     typesafe language unlike Python
+     */
+    fileprivate func normalize (numberSentence : Int) -> String {
+        return String(numberSentence)
+    }
     /** [internal] function to normalize the whole(!) input text
-    note: float or int parameters are allowed
     
     input: string the full text
     output: string
     */
     fileprivate func normalize(numberSentence : String) -> String {
         // we need no check for numbers...
-        if type(number_sentence) is float:
-            return number_sentence
-        if type(number_sentence) is int:
-            return number_sentence
-    
         // ...but if it is a string we need normalizing
-        number_sentence = number_sentence.lower()  # converting input to lowercase
+        var internNumberSentence = numberSentence.lowercased()  // converting input to lowercase
     
+        internNumberSentence = internNumberSentence.replacingOccurrences(of: "-", with: " ")
         // for examples: both is right "vingt et un" and "vingt-et-un"
         // we change this to composed value "vingt-et-un" over the localized data file "replace:" entry
-        for non_composed_number_value, composed_number_value in self.normalize_data.items():
-            if non_composed_number_value.count(' ') >0:
-                number_sentence = number_sentence.replace(non_composed_number_value, composed_number_value)
-    
-        return number_sentence.strip()
-    }
 
-    
+        for nonComposedNumberValue in self.normalizeData.keys {
+          if nonComposedNumberValue.contains(" ") {
+            let composedNumberValue = self.normalizeData[nonComposedNumberValue]!
+              internNumberSentence = internNumberSentence.replacingOccurrences(of: nonComposedNumberValue, with: composedNumberValue)
+          }
+        }
+        
+        var result : String = ""
+        for word in internNumberSentence.split4W2N(regex: "[\\s,]+") {
+            if let newWord = self.normalizeData[word] {
+                result.append(newWord)
+                result.append(" ")
+            }
+        }
+        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+        return result
+    }
     /** [internal] function to check false redundant input
     note: this method has language configuration dependency
     
@@ -382,4 +399,14 @@ func wordToNum (numberSentence : String, langParam : String?) {
 }
 
 //EOF
+
+// Unlike this project the https://github.com/crossroadlabs/Regex library is under more permissive license and not useable.
+extension String {
+    func split4W2N(regex pattern: String) -> [String] {
+        let regex = try! NSRegularExpression(pattern: pattern)
+        let matches = regex.matches(in: self, range: NSRange(0..<utf16.count))
+        let ranges = [startIndex..<startIndex] + matches.map{Range($0.range, in: self)!} + [endIndex..<endIndex]
+        return (0...matches.count).map {String(self[ranges[$0].upperBound..<ranges[$0+1].lowerBound])}
+    }
+}
 
