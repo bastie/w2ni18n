@@ -134,14 +134,16 @@ public class W2N {
     output: string
     **/
     fileprivate func getDecimalString(decimalDigitWords : [String]) -> String {
-        decimal_number_str = []
-        for dec_word in decimal_digit_words:
-            if(dec_word not in self.decimal_words):
-                return 0
-            else:
-                decimal_number_str.append(self.number_system[dec_word])
-        final_decimal_string = ''.join(map(str, decimal_number_str))
-        return final_decimal_string
+        var decimalNumberString : String = ""
+        for decWord in decimalDigitWords {
+            if !self.decimalWords.contains(decWord) {
+                return "0"
+            }
+            else {
+                decimalNumberString += String(self.numberSystem[decWord]!)
+            }
+        }
+        return decimalNumberString
     }
 
     /** [internal] function to normalize the whole(!) input text
