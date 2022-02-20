@@ -91,6 +91,7 @@ public class W2N {
         self.sortedMeasureValues = self.sortedMeasureValues.sorted().reversed()
     }
     
+    // MARK: - namberFormations
     /** [internal] function to form numeric multipliers
     
     input: list of strings
@@ -146,6 +147,7 @@ public class W2N {
         return decimalNumberString
     }
 
+    // MARK: - normalize functions
     /*
      typesafe language unlike Python
      */
@@ -218,20 +220,23 @@ public class W2N {
         }
     }
 
+    // MARK: - getNameByNumberValue
     
     /** [internal] function to get the localized name form value
     
     input: numeric value
     output: name from language configuration or None if not found
     */
-    fileprivate func getNameByNumberValue (newNumber : Numeric) -> String? {
-        for number_name, number_value in self.number_system.items():
-            if new_number == number_value:
-                return number_name
-        return None
+    fileprivate func getNameByNumberValue (newNumber : Int) -> String? {
+        for key in self.numberSystem.keys {
+            if newNumber == self.numberSystem[key] {
+            return key;
+          }
+        }
+        return nil;
     }
     
-
+    // MARK: - getIndexForNumber
 
     
     /* [internal] function to get the index of name for given number
@@ -255,7 +260,7 @@ public class W2N {
         raise: ValueError
     */
     fileprivate func getNumberValue (cleanNumbers : [String]) -> Int {
-        result = 0
+        var result = 0
     
         /*
         # The simple algorithm based on the idea from NLP to work with tagging (key)words
@@ -405,6 +410,8 @@ func wordToNum (numberSentence : String, langParam : String?) {
 }
 
 //EOF
+
+// MARK: - unwanted String extension
 
 // Unlike this project the https://github.com/crossroadlabs/Regex library is under more permissive license and not useable.
 extension String {
