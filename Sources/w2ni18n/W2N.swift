@@ -189,6 +189,9 @@ public class W2N {
         result = result.trimmingCharacters(in: .whitespacesAndNewlines)
         return result
     }
+    
+    
+    // MARK: - checkDoubleInput
     /** [internal] function to check false redundant input
     note: this method has language configuration dependency
     
@@ -201,15 +204,18 @@ public class W2N {
     input: int new_number, string[] words - looking for count of localized name of new_numerb in words
     raise: if redundant input error
     */
-    fileprivate func checkDoubleInput (newNumber : Int, cleanNumbers : [String]) {
-        localized_name = self.get_name_by_number_value(new_number)
-        countGreaterOne = clean_numbers.count(localized_name) > 1  // in result of same logic like Java extra step insert
-        if countGreaterOne:
-            raise ValueError(f"Redundant number word {localized_name} in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+    fileprivate func checkDoubleInput (newNumber : Int, cleanNumbers : [String]) throws {
+        let localizedName = self.getNameByNumberValue(newNumber: newNumber)!
+        guard cleanNumbers.lastIndex(of: localizedName) == cleanNumbers.firstIndex(of: localizedName) else {
+            
+            throw NSError(
+                domain: Bundle.className(), code: 500, userInfo: ["description" :
+                "Redundant number word \(localizedName) in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)"])
             // i18n save für later:
             // de: "Redundantes Nummernwort! Bitte gebe ein zulässiges Nummernwort ein (z.B. zwei Millionen Dreiundzwanzigtausend und Neunundvierzig)"
             // ru: "Избыточное числовое слово! Введите правильное числовое слово (например, два миллиона двадцать три тысячи сорок девять)"
     
+        }
     }
 
     
