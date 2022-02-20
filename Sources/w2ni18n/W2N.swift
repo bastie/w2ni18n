@@ -3,68 +3,95 @@
  * SPDX-License-Identifier: MIT
  */
 
+import Foundation
+
 /**
  Word2Number type
  */
 public struct W2N {
     
-    fileprivate var number_system = {}
-    fileprivate var normalize_data = {}
-    fileprivate var sorted_measure_values : [Int] = [] // = [1_000_000_000_000,1_000_000_000,1_000_000,1_000,100]
+    fileprivate var numberSystem : [String: Int] = [:]
+    fileprivate var normalizeData : [String: String] = [:]
+    fileprivate var sortedMeasureValues : [Int] = [] // = [1_000_000_000_000,1_000_000_000,1_000_000,1_000,100]
     fileprivate var localizedPointName = ""
-    fileprivate var decimal_words : [String] = []
+    fileprivate var decimalWords : [String] = []
     
     internal var lang : String? = "en"
     
-    public private(set) var text = "Hello, World!"
-
     public init (_ language : String?) {
         // first get programming language specific local spoken language
         lang = language
-        if lang is None:
-            lang = locale.getlocale()[0]
-        if "w2n.lang" in os.environ:
-            lang = os.environ["w2n.lang"]
-        if lang is None:
-            lang = locale.getdefaultlocale()[0]
-        if lang is None or lang[0] is None:
-            lang = None
-            if "LANGUAGE" in os.environ:
-                lang = os.environ["LANGUAGE"]
-        if lang is None:
-            lang = "en"  # fallback
-        lang = lang[:2]
+        if let lang = language {}
+        else {
+            lang = Locale.current.languageCode!
+        }
+        if let w2nEnvOverwriteSystemLanguage = ProcessInfo.processInfo.environment["w2n.lang"]{
+            lang = w2nEnvOverwriteSystemLanguage
+        }
+        if lang == nil {
+            if let envOverwriteSystemLanguage = ProcessInfo.processInfo.environment["LANGUAGE"]{
+                lang = envOverwriteSystemLanguage
+            }
+        }
+        if lang == nil {
+            lang = "en"  // fallback
+        }
+        guard lang?.count == 2 else {
+            Int8(128+128) // kill the programm without throw declaration
+        }
         
         // Now analyse the configuration file for the local spoken language
-        data_file = os.path.dirname(__file__)+os.sep+"data"+os.sep+"config_"+lang+".properties"
-        with codecs.open(data_file, "r", encoding="utf-8") as number_system_data:
-            for line in number_system_data:
-                if line.startswith('#'):
-                    pass
-                else:
-                    (key, val) = line.split("=")
-                    if key.startswith("replace:"):
-                        key =key[len("replace:"):]
-                        self.normalize_data[key] = val.strip()
-                    elif key.startswith("measure:"):
-                        self.sorted_measure_values.append(int(val.strip()))
-                    else:
-                        if "point" != key:
-                            val = int(val)
-                            self.number_system[key] = val
-                        else:
-                            self.localizedPointName = val.strip()
-        
-        self.sorted_measure_values = sorted(self.sorted_measure_values,reverse=True)
-        self.decimal_words = list(self.number_system.keys())[:10]
-        
+        let dataFilePath = "./data/config_" + lang!;
+        if let dataFileURL = Bundle.main.url(forResource: dataFilePath, withExtension: "properties") {
+            var zeroToNine : Int = 0
+            if let dataFileContent = try? String (contentsOfFile: dataFileURL.absoluteString, encoding: .utf8) {
+                let numberSystemData = dataFileContent.split(whereSeparator: \.isNewline)
+                for line in numberSystemData {
+                    if line.starts(with: "#") {
+                    }
+                    else {
+                        let parts = {
+                               return (line.components(separatedBy: "=")[0], line.components(separatedBy: "=")[1] )
+                            }()
+                        var key = parts.0
+                        let val = parts.1
+                        if key.starts(with: "replace:") {
+                            key = { return String (key.split(separator: ":",maxSplits: 1) [1] )}()
+                            self.normalizeData[key] = val.trimmingCharacters(in: .whitespacesAndNewlines)
+                        }
+                        else {
+                            if key.starts(with: "measure:"){
+                                
+                                self.sortedMeasureValues.append(
+                                    Int(val.trimmingCharacters(in: .whitespacesAndNewlines))!)
+                            }
+                            else {
+                                if "point" != key {
+                                    let numericValue = Int(val.trimmingCharacters(in: .whitespacesAndNewlines))!
+                                    self.numberSystem[key] = numericValue
+                                }
+                                else{
+                                    self.localizedPointName = val.trimmingCharacters(in: .whitespacesAndNewlines)
+                                }
+                            }
+                        }
+                        if zeroToNine < 10 {
+                            self.decimalWords.append(key)
+                            zeroToNine+=1
+                        }
+                    }
+                }
+            }
+        }
+        self.sortedMeasureValues = self.sortedMeasureValues.sorted().reversed()
     }
+    
     /** [internal] function to form numeric multipliers
     
     input: list of strings
     return value: integer
     */
-    fileprivate func number_formation(number_words : [String]) -> Int {
+    fileprivate func numberFormation(numberWords : [String]) -> Int {
         digit_values = []
         // calculate the three digit values (max)
         for word in number_words:
@@ -95,7 +122,7 @@ public struct W2N {
     input: list of strings
     output: string
     **/
-    fileprivate func get_decimal_string(decimal_digit_words : [String]) -> String {
+    fileprivate func getDecimalString(decimalDigitWords : [String]) -> String {
         decimal_number_str = []
         for dec_word in decimal_digit_words:
             if(dec_word not in self.decimal_words):
@@ -112,7 +139,7 @@ public struct W2N {
     input: string the full text
     output: string
     */
-    fileprivate func normalize(number_sentence : String) -> String {
+    fileprivate func normalize(numberSentence : String) -> String {
         // we need no check for numbers...
         if type(number_sentence) is float:
             return number_sentence
@@ -144,7 +171,7 @@ public struct W2N {
     input: int new_number, string[] words - looking for count of localized name of new_numerb in words
     raise: if redundant input error
     */
-    fileprivate func check_double_input (new_number : Int, clean_numbers : [String]) {
+    fileprivate func checkDoubleInput (newNumber : Int, cleanNumbers : [String]) {
         localized_name = self.get_name_by_number_value(new_number)
         countGreaterOne = clean_numbers.count(localized_name) > 1  // in result of same logic like Java extra step insert
         if countGreaterOne:
@@ -161,7 +188,7 @@ public struct W2N {
     input: numeric value
     output: name from language configuration or None if not found
     */
-    fileprivate func get_name_by_number_value (new_number : Numeric) -> String? {
+    fileprivate func getNameByNumberValue (newNumber : Numeric) -> String? {
         for number_name, number_value in self.number_system.items():
             if new_number == number_value:
                 return number_name
@@ -178,7 +205,7 @@ public struct W2N {
         output: index or -1 if not found
     
     */
-    fileprivate func get_index_for_number(new_number : Int, clean_numbers) -> Inte {
+    fileprivate func getIndexForNumber(newNumber : Int, cleanNumbers : [String]) -> Int {
         // in result of get name by numeric value, the localized name came from dictionary
         // and we need no language specific code
         localized_name = self.get_name_by_number_value(new_number)
@@ -191,7 +218,7 @@ public struct W2N {
         output: int number
         raise: ValueError
     */
-    fileprivate func get_number_value (clean_numbers : [String]) -> Int {
+    fileprivate func getNumberValue (cleanNumbers : [String]) -> Int {
         result = 0
     
         /*
@@ -233,12 +260,12 @@ public struct W2N {
     
    }
 
-    /* [internal] function to get the value for the measure aka 1000, 1_000_000 ...
+    /**function to get the value for the measure aka 1000, 1_000_000 ...
     
     input: index of measure
     output: multiplier for measure
     */
-    fileprivate func get_measure_multiplier (measure_index : Int, clean_numbers) -> Int {
+    fileprivate func getMeasureMultiplier (measure_index : Int, clean_numbers : [String]) -> Int {
         param = clean_numbers[0:measure_index]
         param = param if len(param)>0 else {self.get_name_by_number_value(1)}
         multiplier = self.number_formation(param)
@@ -260,7 +287,7 @@ public struct W2N {
     output: int or float or None
     raise: given number is formal incorrect
     */
-    public func word_to_num(number_sentence : String) -> Numeric {
+    public func wordToNum(_ numberSentence : String) -> Numeric {
         result = None
         clean_numbers = []
         clean_decimal_numbers = []
@@ -336,9 +363,9 @@ public struct W2N {
     }
 }
 
-func word_to_num (numberSentence : String, langParam : String?) {
+func wordToNum (numberSentence : String, langParam : String?) {
     let instance = W2N(langParam)
-    return instance.word_to_num(numberSentence)
+    return instance.wordToNum(numberSentence)
 }
 
 //EOF
