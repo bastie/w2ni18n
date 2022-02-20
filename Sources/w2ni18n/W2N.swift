@@ -8,7 +8,7 @@ import Foundation
 /**
  Word2Number type
  */
-public struct W2N {
+public class W2N {
     
     fileprivate var numberSystem : [String: Int] = [:]
     fileprivate var normalizeData : [String: String] = [:]
@@ -17,7 +17,12 @@ public struct W2N {
     fileprivate var decimalWords : [String] = []
     
     internal var lang : String? = "en"
+
+    // MARK: - Constructor
     
+    /**
+     Construct the instance of type
+     */
     public init (_ language : String?) {
         // first get programming language specific local spoken language
         lang = language
@@ -92,28 +97,34 @@ public struct W2N {
     return value: integer
     */
     fileprivate func numberFormation(numberWords : [String]) -> Int {
-        digit_values = []
+        var digitValues : [Int] = []
         // calculate the three digit values (max)
-        for word in number_words:
-            next_number_candidat = self.number_system[word]
-            digit_values.append(next_number_candidat)
-        hundred_index = digit_values.count(100)
-        hundred_index = digit_values.index(100) if 100 in digit_values else -1
-        if hundred_index == 1:
-            digit_values[0] = digit_values[0] * digit_values[1] # this is like other languages need to do it
-            del digit_values[1]
-        if len(digit_values) > 3 and digit_values[0] < 100:
-            digit_values[0] *= digit_values[1]
-            del digit_values[1]
-        elif len(digit_values) > 3 and digit_values[0] > 100:
-            digit_values[1] *= digit_values[2]
-            del digit_values[2]
+        for word in numberWords {
+            var nextNumberCandidat = self.numberSystem[word]!
+            digitValues.append(nextNumberCandidat)
+        }
+        let hundredIndex = digitValues.contains(100) ? digitValues.firstIndex(of:100) : -1
+        if hundredIndex == 1 {
+            digitValues[0] = digitValues[0] * digitValues[1] // this is like other languages need to do it
+            digitValues.remove(at: 1)
+        }
+        if digitValues.count > 3 && digitValues[0] < 100 {
+            digitValues[0] *= digitValues[1]
+            digitValues.remove(at: 1)
+        }
+        else {
+            if digitValues.count > 3 && digitValues[0] > 100 {
+                digitValues[1] *= digitValues[2]
+                digitValues.remove(at: 2)
+            }
+        }
         // add the three digits
-        while len(digit_values) > 1:
-            digit_values[0] += digit_values[1]
-            del digit_values[1]
+        while digitValues.count > 1 {
+            digitValues[0] += digitValues[1]
+            digitValues.remove(at: 1)
+        }
         // return the result
-        return digit_values[0]
+        return digitValues[0]
     }
     
     /** [internal] function to convert post decimal digit words to numerial digits
