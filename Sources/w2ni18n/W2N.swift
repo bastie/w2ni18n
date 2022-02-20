@@ -237,21 +237,26 @@ public class W2N {
     }
     
     // MARK: - getIndexForNumber
-
     
     /* [internal] function to get the index of name for given number
         note: call this after lemma text
 
         input: int number
-        output: index or -1 if not found
+        output: index or nil if not found
     
     */
-    fileprivate func getIndexForNumber(newNumber : Int, cleanNumbers : [String]) -> Int {
+    fileprivate func getIndexForNumber(newNumber : Int, cleanNumbers : [String]) -> Int? {
         // in result of get name by numeric value, the localized name came from dictionary
         // and we need no language specific code
-        localized_name = self.get_name_by_number_value(new_number)
-        return clean_numbers.index(localized_name) if localized_name in clean_numbers else -1
+        if let localizedName = self.getNameByNumberValue(newNumber: newNumber) {
+            if let result = cleanNumbers.firstIndex(of:localizedName) {
+                return result
+            }
+        }
+        return nil
     }
+    
+    // MARK: - getNumberValue
     
     /* [internal] function to get the pre-decimal number from clean_number
     
