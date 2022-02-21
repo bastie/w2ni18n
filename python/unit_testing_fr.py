@@ -32,8 +32,8 @@ class TestW2N(unittest.TestCase):
         self.assertEqual(instance.word_to_num('neuf billion huit  milliard sept   million six mille cent'), 9008007006100)
 
         # test case for float values
-        self.assertEqual(instance.word_to_num('zero point zero un deux trois quatre cinq six sept huit neuf'), 0.0123456789)
-        self.assertEqual(instance.word_to_num('zero point zero un deux trois quatre cinq six sept huit neuf zero'), 0.0123456789)
+        self.assertEqual(instance.word_to_num('zero virgule zero un deux trois quatre cinq six sept huit neuf'), 0.0123456789)
+        self.assertEqual(instance.word_to_num('zero virgule zero un deux trois quatre cinq six sept huit neuf zero'), 0.0123456789)
 
     def test_negatives_fr(self):
         instance = w2n.W2N(lang_param="fr")
