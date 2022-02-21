@@ -258,7 +258,7 @@ public class W2N {
     
     // MARK: - getNumberValue
     
-    /* [internal] function to get the pre-decimal number from clean_number
+    /** [internal] function to get the pre-decimal number from clean_number
     
         input: sorted array with number words
         output: int number
@@ -289,29 +289,31 @@ public class W2N {
         # make it free from other measure part in the number.
         # Also it is no different to calculate a trillion or a million or other
         */
-        
-        for measure_value in self.sorted_measure_values:
-            measure_value_index = self.get_index_for_number(measure_value, clean_numbers)
-            if measure_value_index > -1:
-                result +=  self.get_measure_multiplier(measure_value_index, clean_numbers) * measure_value
-                clean_numbers = clean_numbers[measure_value_index+1:]
-            // fi
-        // rof
+        var muatbleCleanNumbers = cleanNumbers
+        for measureValue in self.sortedMeasureValues{
+            if let measureValueIndex = self.getIndexForNumber(newNumber: measureValue, cleanNumbers: muatbleCleanNumbers) {
+                result +=  self.getMeasureMultiplier(measureIndex: measureValueIndex, cleanNumbers: muatbleCleanNumbers) * measureValue
+                muatbleCleanNumbers.remove(at: 0)
+            }
+        }
         // Now we add the value of less then hundred
-        if len(clean_numbers) > 0:
-            multiplier = self.number_formation(clean_numbers)
+        if muatbleCleanNumbers.count > 0{
+            let multiplier = self.numberFormation(numberWords: muatbleCleanNumbers)
             result +=  multiplier * 1
+        }
         
         return result
     
    }
+    
+    // MARK: - getMeasureMultiplier
 
     /**function to get the value for the measure aka 1000, 1_000_000 ...
     
     input: index of measure
     output: multiplier for measure
     */
-    fileprivate func getMeasureMultiplier (measure_index : Int, clean_numbers : [String]) -> Int {
+    fileprivate func getMeasureMultiplier (measureIndex : Int, cleanNumbers : [String]) -> Int {
         param = clean_numbers[0:measure_index]
         param = param if len(param)>0 else {self.get_name_by_number_value(1)}
         multiplier = self.number_formation(param)
