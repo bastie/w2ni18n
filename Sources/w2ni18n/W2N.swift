@@ -301,10 +301,8 @@ public class W2N {
             let multiplier = self.numberFormation(numberWords: muatbleCleanNumbers)
             result +=  multiplier * 1
         }
-        
         return result
-    
-   }
+    }
     
     // MARK: - getMeasureMultiplier
 
@@ -314,11 +312,17 @@ public class W2N {
     output: multiplier for measure
     */
     fileprivate func getMeasureMultiplier (measureIndex : Int, cleanNumbers : [String]) -> Int {
-        param = clean_numbers[0:measure_index]
-        param = param if len(param)>0 else {self.get_name_by_number_value(1)}
-        multiplier = self.number_formation(param)
-        return multiplier
-    
+        var param : [String] = Array (cleanNumbers[0...measureIndex])
+        if param.isEmpty {
+            if let toAppend = self.getNameByNumberValue(newNumber: 1) {
+                param.append(toAppend);
+            }
+            else {
+                _ = UInt8(128+128)
+            }
+        }
+        let multiplier : Int = self.numberFormation(numberWords: param);
+        return multiplier;
     }
     
  
