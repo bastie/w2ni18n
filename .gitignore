@@ -1,6 +1,9 @@
 # MacOS
 .DS_Store
 
+# Swift
+w2ni18n.xcodeproj
+
 # Python package build strukture
 build/
 dist/

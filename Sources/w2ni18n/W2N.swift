@@ -325,97 +325,145 @@ public class W2N {
         return multiplier;
     }
     
- 
+    // MARK: - wordToNum
     
     /** public function to return integer for an input `number_sentence` string
     This function return as result
     - the same float if float is input
     - the same int if int is given
     - None if no number can be extracted
-    - ValueError if extracted number is formal incorrect
+    - Error if extracted number is formal incorrect
+     
+     Sample:
+     switch wordToNum(numberSentence: "Take the three books.") {
+     case let numericValue as Double:
+        print ("Double value is \(numericValue).")
+     case let numericValue as Int:
+        print ("Int value is \(numericValue)!")
+     default:
+        print ("no numeric value")
+     }
+
 
     preconditions: number_sentence is type of float, int or str
     input: string
     output: int or float or None
     raise: given number is formal incorrect
     */
-    public func wordToNum(_ numberSentence : String) -> Numeric {
-        result = None
-        clean_numbers = []
-        clean_decimal_numbers = []
-    
+    public func wordToNum(_ numberSentence : Any) -> Any {
         // check preconditions
+        var numberSentenceString : String = numberSentence
+        switch numberSentence {
+        case let doubleValue as Double:
+            return doubleValue
+        case let intValue as Int:
+            return intValue
+        case let numberSentenceStr as String:
+            numberSentenceString = numberSentenceStr
+        default:
+            let _ : UInt8 = UInt8(128+128)
+            //raise ValueError("Type of input is not string! Please enter a valid number word (eg. \'two million twenty three thousand and forty nine\')")
+        }
+        numberSentenceString = numberSentenceString.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        var result : Any = 0
+        var cleanNumbers : [String] = []
+        var cleanDecimalNumbers : [String] = []
     
-        if type(number_sentence) is float:
-            return number_sentence
-        if type(number_sentence) is int:
-            return number_sentence
         
-        if type(number_sentence) is not str:
-            raise ValueError("Type of input is not string! Please enter a valid number word (eg. \'two million twenty three thousand and forty nine\')")
+        numberSentenceString = self.normalize(numberSentence: numberSentenceString )
     
-        number_sentence = self.normalize(number_sentence)
-    
-        if(number_sentence.isdigit()):  // return the number if user enters a number string
-            result = int(number_sentence)
-        else:
-            split_words = re.findall(r'\w+', number_sentence)  # strip extra spaces and comma and than split sentence into words
+        if let isDigit = Int(numberSentenceString) {  // return the number if user enters a number string
+            result = isDigit
+        }
+        else{
+            splitWords = re.findall(r'\w+', numberSentenceString)  // strip extra spaces and comma and than split sentence into words
         
             // removing unknown words form text
-            for word in split_words:
-                word = self.normalize_data.get(word,word) # replacing words and lemma text
-                if word in self.number_system:
-                    clean_numbers.append(word)
-                elif word == self.localizedPointName:
-                    clean_numbers.append(word)
+            for word in splitWords{
+                word = self.normalizeData.get(word,word) // replacing words and lemma text
+                if word in self.numberSystem {
+                    cleanNumbers.append(word)
+                }
+                else {
+                    if word == self.localizedPointName {
+                        cleanNumbers.append(word)
+                    }
+                }
+            }
         
             // Error message if the user enters invalid input!
-            if len(clean_numbers) == 0:
-                raise ValueError("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            if cleanNumbers.count == 0 {
+                let _ = UInt8(128+128)
+                //raise ValueError("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            }
         
             // check point count
-            if clean_numbers.count(self.localizedPointName)>1:
+            if cleanNumbers.firstIndex(of:self.localizedPointName) != cleanNumbers.lastIndex(of: self.localizedPointName) {
                  raise ValueError("Redundant point word "+self.localizedPointName+"! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            }
                       
             // split in pre-decimal and post-decimal part
-            point_count = clean_numbers.count(self.localizedPointName)
-            if point_count == 1:
-                clean_decimal_numbers = clean_numbers[clean_numbers.index(self.localizedPointName)+1:]
-                clean_numbers = clean_numbers[:clean_numbers.index(self.localizedPointName)]
+            var pointCount = cleanNumbers.count(self.localizedPointName)
+            if pointCount == 1 {
+                cleanDecimalNumbers = cleanNumbers[cleanNumbers.index(self.localizedPointName)+1:]
+                cleanNumbers = cleanNumbers[:clean_numbers.index(self.localizedPointName)]
+            }
     
             // check measure word errors
-            measure_words_sequence = []
+            var measureWordsSequence : [String] = []
             // check for to much measure words like "million million"
-            for measure_value_double_check in self.sorted_measure_values:
-                if measure_value_double_check >= 1000: # measure values under 1000 can be more than one in text
-                    self.check_double_input(measure_value_double_check, clean_numbers)
-                    # save index for next check
-                    if -1 != self.get_index_for_number(measure_value_double_check,clean_numbers):
-                        measure_words_sequence.append(self.get_index_for_number(measure_value_double_check,clean_numbers))
+            for measureValueDoubleCheck in self.sortedMeasureValues {
+                if measureValueDoubleCheck >= 1000 { // measure values under 1000 can be more than one in text
+                    self.checkDoubleInput(measureValueDoubleCheck, cleanNumbers)
+                    // save index for next check
+                    if -1 != self.getIndexForNumber(measureValueDoubleCheck,cleanNumbers) {
+                        measureWordsSequence.append(self.getIndexForNumber(measureValueDoubleCheck,cleanNumbers))
+                    }
+                }
+            }
     
             // check generic measure words are in right sequence
-            if measure_words_sequence != sorted(measure_words_sequence):
-                raise ValueError("Malformed number in result of false measure word sequence eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            if measureWordsSequence != sorted(measureWordsSequence) {
+                let _ = UInt8(128+128)
+                //raise ValueError("Malformed number in result of false measure word sequence eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            }
     
             // check no measure words in decimal numbers
-            for measure_value in self.sorted_measure_values:
-                measure_name = self.get_name_by_number_value(measure_value)
-                if measure_name in clean_decimal_numbers:
-                    raise ValueError("Malformed number in result of false measure word after point eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+            for measureValue in self.sortedMeasureValues {
+                var measureName = self.getNameByNumberValue(newNumber: measureValue)!
+                if measureName in cleanDecimalNumbers {
+                    let _ = UInt8(128+128)
+                    //raise ValueError("Malformed number in result of false measure word after point eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+                }
+            }
     
             // Now we calculate the pre-decimal value
-            result = self.get_number_value(clean_numbers)
+            result = self.getNumberValue(cleanNumbers: cleanNumbers)
             
             // And add the post-decimal value
-            if len(clean_decimal_numbers) > 0:
-                total_sum_as_string = str(result)+"."+str(self.get_decimal_string(clean_decimal_numbers))
-                result = float(total_sum_as_string)
-    
+            if cleanDecimalNumbers.count > 0 {
+                var totalSumAsString = String(result)+"."+String(self.getDecimalString(cleanDecimalNumbers))
+                result = Float(totalSumAsString)
+            }
+        }
         return result
     }
 }
 
-func wordToNum (numberSentence : String, langParam : String?) {
+/**
+ 
+ Sample:
+ switch wordToNum(numberSentence: "Take the three books.") {
+ case let numericValue as Double:
+    print ("Double value is \(numericValue).")
+ case let numericValue as Int:
+    print ("Int value is \(numericValue)!")
+ default:
+    print ("no numeric value")
+ }
+ */
+func wordToNum (numberSentence : String, langParam : String?) -> Any {
     let instance = W2N(langParam)
     return instance.wordToNum(numberSentence)
 }
