@@ -324,6 +324,7 @@ Call the ``build.sh`` script and use the new ``W2N.dll`` file
 
 ## Bugs/Errors
 - german language need more specific algorithm
+- french language need update the property ``point=virgule``. This is included in source but not in releases.
 
 ### w2n fixed
 - ``Add regex to fix comma bug`` fixed by jnelson16
