@@ -1,6 +1,3 @@
-This project is temporary archived.
-
-
 # Word to Number i18n
 
 Convert number words from different languages with Python, CSharp or Java API eg. three hundred and forty two to numbers (342) or vingt-et-un (21) or две целых три десятых (2.3).Word2Number-i18n convert number words (eg. twenty one) to numeric digits (21).
@@ -352,7 +349,7 @@ The MIT License (MIT)
 
 Copyright (c) 2016 Akshay Nagpal 
 
-Copyright (c) 2020-2021 Sebastian Ritter
+Copyright (c) 2020-2025 Sebastian Ritter
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
