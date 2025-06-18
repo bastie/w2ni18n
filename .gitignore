@@ -1,6 +1,11 @@
 # MacOS
 .DS_Store
 
+# Swift
+w2ni18n.xcodeproj
+.swiftpm/
+Package.resolved
+
 # Python package build strukture
 build/
 dist/
