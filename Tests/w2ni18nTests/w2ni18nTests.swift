@@ -7,7 +7,7 @@ import Testing
 func testPositives_en() async throws {
   var value = try W2N("en").wordToNum("two million three thousand nine hundred and eighty four")
   
-  if let doubleValue = value as? Double {
+  if let _ = value as? Double {
     #expect(Bool(booleanLiteral: false), "Int64 expected, got Double")
   }
   else if let intValue = value as? Int64 {

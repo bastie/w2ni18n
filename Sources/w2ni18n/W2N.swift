@@ -111,7 +111,7 @@ open class W2N {
       sortedMeasureValues.sort(by: >) //Collections.sort(sortedMeasureValues,Collections.reverseOrder());
     }
     catch  {
-      throw Throwable.RuntimeException(error.localizedDescription);
+      throw RuntimeException(error.localizedDescription);
     }
   }
   
@@ -232,12 +232,12 @@ open class W2N {
   
       // Error message if the user enters invalid input!
       if (cleanNumbers.count == 0) {
-        throw Throwable.NumberFormatException("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+        throw NumberFormatException("No valid number words found! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
       }
 
       let toMuchPoints = cleanNumbers.indexOf(self.localizedPointName) != cleanNumbers.lastIndexOf(localizedPointName);
       if (toMuchPoints) {
-        throw Throwable.NumberFormatException("Redundant point word \(localizedPointName)! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+        throw NumberFormatException("Redundant point word \(localizedPointName)! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
       }
   
       // separate decimal part of number (if exists)
@@ -269,7 +269,7 @@ open class W2N {
       sortedMeasureWordsSequence.sort()
       for i in 0..<measureWordsSequence.count {
         if (measureWordsSequence[i] != sortedMeasureWordsSequence[i]) {
-          throw Throwable.NumberFormatException ("Malformed number in result of false measure word sequence eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
+          throw NumberFormatException ("Malformed number in result of false measure word sequence eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)");
         }
       }
       
@@ -297,7 +297,7 @@ open class W2N {
       for measureValue in sortedMeasureValues {
         let measure_name = getNameByNumberValue(measureValue)!
         if (cleanDecimalNumbers.contains(measure_name)) {
-          throw Throwable.NumberFormatException ("Malformed number in result of false measure word after point eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+          throw NumberFormatException ("Malformed number in result of false measure word after point eg. trillion after thousand! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
         }
       }
       
@@ -381,7 +381,7 @@ open class W2N {
     
     let countGreaterOne = cleanNumbers.indexOf(localizedName) != cleanNumbers.lastIndexOf(localizedName);
     if (countGreaterOne) {
-      throw Throwable.NumberFormatException ("Redundant number word (\(localizedName ?? "???")) in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
+      throw NumberFormatException ("Redundant number word (\(localizedName ?? "???")) in! Please enter a valid number word (eg. two million twenty three thousand and forty nine)")
     }
   }
   
